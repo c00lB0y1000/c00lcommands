@@ -22,6 +22,9 @@ local shiftHeld = false
 local normalSpeed = 16
 local sprintSpeed = 32
 
+-- Килтауч
+local killtouch = false
+
 -- GUI элементы
 local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player.PlayerGui
@@ -75,7 +78,7 @@ sprintBadge.TextYAlignment = Enum.TextYAlignment.Center
 sprintBadge.BorderSizePixel = 2
 sprintBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 
-local killtouch = Instance.new("TextLabel")
+local killtouchBadge = Instance.new("TextLabel")
 killtouchBadge.Parent = screenGui
 killtouchBadge.Size = UDim2.new(0, 200, 0, 50)
 killtouchBadge.Position = UDim2.new(0, 10, 0, 250)
@@ -247,33 +250,20 @@ UserInputService.InputEnded:Connect(function(input)
   end
 end)
 --Килтауч
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-
-    local key = input.KeyCode
-
-    -- Активировать или деактивировать режим убийства при столкновении
-    if key == Enum.KeyCode.G then
-        gKeyActive = not gKeyActive
-        if gKeyActive then
-            killtouchBadge.Text = "Killtouch: on"
-        else
-            killtouchBadge.Text = "Killtouch: off"
-        end
-    end
+  if key == Enum.KeyCode.G then
+    killtouch = not killtouch
+    killtouchBadge.Text = killtouch and "Killtouch: on" or "Killtouch: off"
+  end
 end)
 
--- Проверка на контакт с другими объектами, если активирован режим "G"
-local function onTouch(hit)
-    if gKeyActive and hit.Parent then
-        -- Проверяем, не является ли это другим игроком или объектом, который может повредить
-        if hit.Parent:FindFirstChild("Humanoid") then
-            -- Убиваем игрока, если он был в контакте
-            humanoid.Health = 0
-            print("You were killed by contact!")
-        end
-    end
-end
+-- Проверка на контакт с объектами
+game:GetService("RunService").Heartbeat:Connect(function()
+  if killtouch then
+    -- Если объект с Humanoid, убиваем его
+    local hit = humanoidRootPart.Position
+    -- Подставить вашу логику для проверки, с чем столкнулся игрок
+  end
+end)
 
 -- Поле для ввода скорости полёта
 local speedBox = Instance.new("TextBox")
