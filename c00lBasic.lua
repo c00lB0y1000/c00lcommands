@@ -1,4 +1,4 @@
-local Players = game:GetService("Players")
+local Players = game:GetService("Players") 
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
@@ -21,9 +21,6 @@ local noclip = false
 local shiftHeld = false
 local normalSpeed = 16
 local sprintSpeed = 32
-
--- Килтауч
-local killtouch = false
 
 -- GUI элементы
 local screenGui = Instance.new("ScreenGui")
@@ -250,20 +247,33 @@ UserInputService.InputEnded:Connect(function(input)
   end
 end)
 --Килтауч
-  if key == Enum.KeyCode.G then
-    killtouch = not killtouch
-    killtouchBadge.Text = killtouch and "Killtouch: on" or "Killtouch: off"
-  end
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    local key = input.KeyCode
+
+    -- Активировать или деактивировать режим убийства при столкновении
+    if key == Enum.KeyCode.G then
+        gKeyActive = not gKeyActive
+        if gKeyActive then
+            killtouchBadge.Text = "Killtouch: on"
+        else
+            killtouchBadge.Text = "Killtouch: off"
+        end
+    end
 end)
 
--- Проверка на контакт с объектами
-game:GetService("RunService").Heartbeat:Connect(function()
-  if killtouch then
-    -- Если объект с Humanoid, убиваем его
-    local hit = humanoidRootPart.Position
-    -- Подставить вашу логику для проверки, с чем столкнулся игрок
-  end
-end)
+-- Проверка на контакт с другими объектами, если активирован режим "G"
+local function onTouch(hit)
+    if gKeyActive and hit.Parent then
+        -- Проверяем, не является ли это другим игроком или объектом, который может повредить
+        if hit.Parent:FindFirstChild("Humanoid") then
+            -- Убиваем игрока, если он был в контакте
+            humanoid.Health = 0
+            print("You were killed by contact!")
+        end
+    end
+end
 
 -- Поле для ввода скорости полёта
 local speedBox = Instance.new("TextBox")
