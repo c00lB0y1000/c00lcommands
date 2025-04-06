@@ -75,12 +75,27 @@ sprintBadge.TextYAlignment = Enum.TextYAlignment.Center
 sprintBadge.BorderSizePixel = 2
 sprintBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 
+local killtouch = Instance.new("TextLabel")
+killtouchBadge.Parent = screenGui
+killtouchBadge.Size = UDim2.new(0, 200, 0, 50)
+killtouchBadge.Position = UDim2.new(0, 10, 0, 250)
+killtouchBadge.Text = "Killtouch: off"
+killtouchBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+killtouchBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+killtouchBadge.BackgroundTransparency = 0.5
+killtouchBadge.TextSize = 18
+killtouchBadge.Font = Enum.Font.GothamBold
+killtouchBadge.TextXAlignment = Enum.TextXAlignment.Center
+killtouchBadge.TextYAlignment = Enum.TextYAlignment.Center
+killtouchBadge.BorderSizePixel = 2
+killtouchBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
 -- Окно с подсказками
 local helpWindow = Instance.new("TextLabel")
 helpWindow.Parent = screenGui
 helpWindow.Size = UDim2.new(0, 300, 0, 150)
 helpWindow.Position = UDim2.new(0, 220, 0, 10)
-helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor"
+helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\n G - Killtouch"
 helpWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
 helpWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 helpWindow.BackgroundTransparency = 0.5
@@ -95,7 +110,7 @@ helpWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
 local toggleHelpButton = Instance.new("TextButton")
 toggleHelpButton.Parent = screenGui
 toggleHelpButton.Size = UDim2.new(0, 200, 0, 50)
-toggleHelpButton.Position = UDim2.new(0, 10, 0, 250) 
+toggleHelpButton.Position = UDim2.new(0, 10, 0, 310) 
 toggleHelpButton.Text = "hide help list"
 toggleHelpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleHelpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -231,6 +246,34 @@ UserInputService.InputEnded:Connect(function(input)
     end
   end
 end)
+--Килтауч
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    local key = input.KeyCode
+
+    -- Активировать или деактивировать режим убийства при столкновении
+    if key == Enum.KeyCode.G then
+        gKeyActive = not gKeyActive
+        if gKeyActive then
+            killtouchBadge.Text = "Killtouch: on"
+        else
+            killtouchBadge.Text = "Killtouch: off"
+        end
+    end
+end)
+
+-- Проверка на контакт с другими объектами, если активирован режим "G"
+local function onTouch(hit)
+    if gKeyActive and hit.Parent then
+        -- Проверяем, не является ли это другим игроком или объектом, который может повредить
+        if hit.Parent:FindFirstChild("Humanoid") then
+            -- Убиваем игрока, если он был в контакте
+            humanoid.Health = 0
+            print("You were killed by contact!")
+        end
+    end
+end
 
 -- Поле для ввода скорости полёта
 local speedBox = Instance.new("TextBox")
@@ -282,6 +325,11 @@ player.CharacterAdded:Connect(function(character)
     -- Останавливаем все действия, связанные с персонажем
     resetStatuses()
 end)
+
+
+-- Подключаем событие на касание
+humanoidRootPart.Touched:Connect(onTouch)
+
 
 -- Установка обычной скорости при старте
 humanoid.WalkSpeed = normalSpeed
