@@ -119,7 +119,7 @@ local supportWindow = Instance.new("TextLabel")
 supportWindow.Parent = screenGui
 supportWindow.Size = UDim2.new(0, 300, 0, 150)
 supportWindow.Position = UDim2.new(0, 220, 0, 10)
-supportWindow.Text = "Work in\n Full: natural disaster survival, prison life\n Dont work 1 function: The Strongest Batleground(Fly), Murder Mystery 2(Fly), work in pizza place(GUI)"
+supportWindow.Text = "Work in\n Full: natural disaster survival, prison life\n Dont work 1 function: The Strongest Batleground(Fly), Murder Mystery 2(Fly)"
 supportWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
 supportWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 supportWindow.BackgroundTransparency = 0.5
@@ -130,6 +130,7 @@ supportWindow.TextYAlignment = Enum.TextYAlignment.Top
 supportWindow.BorderSizePixel = 2
 supportWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
 supportWindow.Visible = false  -- Изначально окно невидимо
+supportWindow.TextWrapped = true  -- Автоперенос текста
 
 -- Кнопка для сворачивания окна с подсказками
 local togglesupportButton = Instance.new("TextButton")
@@ -153,6 +154,7 @@ togglesupportButton.MouseButton1Click:Connect(function()
   supportWindow.Visible = supportVisible
   togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
 end)
+
 
 
 -- Старт полёта
