@@ -406,48 +406,43 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local enabled = false
 
--- Когда игрок нажимает H
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
+local spinning = false
+local spinSpeed = 1000  -- Скорость вращения (чем больше, тем быстрее)
+local connection
+
+-- Функция для включения спина
+local function startSpin()
+    local root = character:WaitForChild("HumanoidRootPart")
+    connection = RunService.RenderStepped:Connect(function(dt)
+        root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
+    end)
+end
+
+-- Функция для остановки спина
+local function stopSpin()
+    if connection then
+        connection:Disconnect()
+    end
+end
+
+-- Включаем или останавливаем спин на H
+local UserInputService = game:GetService("UserInputService")
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
-	if input.KeyCode == Enum.KeyCode.H then
-		enabled = not enabled
-		print("Kill mode:", enabled and "ON" or "OFF")
-	end
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.H then
+        if spinning then
+            stopSpin()  -- Останавливаем спин
+        else
+            startSpin()  -- Включаем спин
+        end
+        spinning = not spinning  -- Переключаем состояние
+    end
 end)
-
--- Функция убийства
-local function kill(targetPlayer)
-	if targetPlayer and targetPlayer ~= player then
-		local humanoid = targetPlayer.Character and targetPlayer.Character:FindFirstChildOfClass("Humanoid")
-		if humanoid then
-			humanoid.Health = 0
-		end
-	end
-end
-
--- Обработка прикосновений
-local function onTouched(part)
-	if not enabled then return end
-
-	local touchedPlayer = Players:GetPlayerFromCharacter(part.Parent)
-	if touchedPlayer then
-		kill(touchedPlayer)
-	end
-end
-
--- Подключение ко всем частям тела
-local function connectTouchEvents()
-	character = player.Character or player.CharacterAdded:Wait()
-	for _, part in ipairs(character:GetChildren()) do
-		if part:IsA("BasePart") then
-			part.Touched:Connect(onTouched)
-		end
-	end
-end
-
--- Подключиться при старте и при респавне
-connectTouchEvents()
-player.CharacterAdded:Connect(connectTouchEvents)
 
 
 -- Установка обычной скорости при старте
