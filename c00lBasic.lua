@@ -169,45 +169,6 @@ togglesupportButton.MouseButton1Click:Connect(function()
   togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
 end)
 
-local uWindow = Instance.new("TextLabel")
-uWindow.Parent = screenGui
-uWindow.Size = UDim2.new(0, 150, 0, 50)
-uWindow.Position = UDim2.new(0, 220, 0, 500)
-uWindow.Text = ""
-uWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
-uWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-uWindow.BackgroundTransparency = 0.5
-uWindow.TextSize = 18
-uWindow.Font = Enum.Font.GothamBold
-uWindow.TextXAlignment = Enum.TextXAlignment.Left
-uWindow.TextYAlignment = Enum.TextYAlignment.Top
-uWindow.BorderSizePixel = 2
-uWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
-uWindow.Visible = false  -- Изначально окно невидимо
-uWindow.TextWrapped = true  -- Автоперенос текста
-
-local toggleuButton = Instance.new("TextButton")
-toggleuButton.Parent = screenGui
-toggleuButton.Size = UDim2.new(0, 200, 0, 50)
-toggleuButton.Position = UDim2.new(0, 700, 0, 10) 
-toggleuButton.Text = "show spec list"
-toggleuButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleuButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-toggleuButton.BackgroundTransparency = 0.5
-toggleuButton.TextSize = 18
-toggleuButton.Font = Enum.Font.GothamBold
-toggleuButton.TextXAlignment = Enum.TextXAlignment.Center
-toggleuButton.TextYAlignment = Enum.TextYAlignment.Center
-toggleuButton.BorderSizePixel = 2
-toggleuButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
-
-local supportVisible = false
-togglesupportButton.MouseButton1Click:Connect(function()
-  supportVisible = not supportVisible
-  supportWindow.Visible = supportVisible
-  togglesupportButton.Text = supportVisible and "hide spec list" or "show spec list"
-end)
-
 -- TextBox для ввода имени игрока
 local spectateInput = Instance.new("TextBox")
 spectateInput.Parent = screenGui
@@ -432,11 +393,9 @@ spectateButton.MouseButton1Click:Connect(function()
         workspace.CurrentCamera.CameraSubject = targetPlayer.Character:FindFirstChild("Humanoid")
         workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
 
-        uWindow.Visible = true
-        uWindow.Text = "Spectating: " .. targetName
+        print("Spectating: " .. targetName)
     else
-        uWindow.Visible = true
-        uWindow.Text = "Player not found or not loaded."
+        print("Player not found or not loaded.")
     end
 end)
 
