@@ -119,7 +119,7 @@ local supportWindow = Instance.new("TextLabel")
 supportWindow.Parent = screenGui
 supportWindow.Size = UDim2.new(0, 300, 0, 150)
 supportWindow.Position = UDim2.new(0, 220, 0, 10)
-supportWindow.Text = "я прост помощник"
+supportWindow.Text = "Work in\n Full: natural disaster survival, prison life\n Dont work 1 function: The Strongest Batleground(Fly), Murder Mystery 2(Fly), work in pizza place(GUI)"
 supportWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
 supportWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 supportWindow.BackgroundTransparency = 0.5
@@ -129,12 +129,13 @@ supportWindow.TextXAlignment = Enum.TextXAlignment.Left
 supportWindow.TextYAlignment = Enum.TextYAlignment.Top
 supportWindow.BorderSizePixel = 2
 supportWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
+supportWindow.Visible = false  -- Изначально окно невидимо
 
 -- Кнопка для сворачивания окна с подсказками
 local togglesupportButton = Instance.new("TextButton")
 togglesupportButton.Parent = screenGui
 togglesupportButton.Size = UDim2.new(0, 200, 0, 50)
-togglesupportButton.Position = UDim2.new(0, 10, 0, 310) 
+togglesupportButton.Position = UDim2.new(0, 10, 0, 250) 
 togglesupportButton.Text = "hide help list"
 togglesupportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 togglesupportButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
