@@ -428,7 +428,7 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
 local spinning = false
-local spinSpeed = 100000  -- Скорость вращения (чем больше, тем быстрее)
+local spinSpeed = 1000000000  -- Скорость вращения (чем больше, тем быстрее)
 local connection
 
 -- Функция для включения спина
