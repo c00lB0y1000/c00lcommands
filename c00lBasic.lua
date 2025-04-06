@@ -1,15 +1,3 @@
-[[ --
-Work in:
-	FULL:
-		natural disaster survival
-		prison life
-	without GUI:
-		Work in pizza place
-	without fly:
-		Murder Mystery 2
-dont work 2 function and more:
-
--- ]]
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
