@@ -91,6 +91,22 @@ sprintBadge.TextYAlignment = Enum.TextYAlignment.Center
 sprintBadge.BorderSizePixel = 2
 sprintBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 
+-- Бейджик для спина
+local spinBadge = Instance.new("TextLabel")
+spinBadge.Parent = screenGui
+spinBadge.Size = UDim2.new(0, 200, 0, 50)
+spinBadge.Position = UDim2.new(0, 10, 0, 250)
+spinBadge.Text = "Spin: off"
+spinBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+spinBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+spinBadge.BackgroundTransparency = 0.5
+spinBadge.TextSize = 18
+spinBadge.Font = Enum.Font.GothamBold
+spinBadge.TextXAlignment = Enum.TextXAlignment.Center
+spinBadge.TextYAlignment = Enum.TextYAlignment.Center
+spinBadge.BorderSizePixel = 2
+spinBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
 -- Окно с подсказками
 local helpWindow = Instance.new("TextLabel")
 helpWindow.Parent = screenGui
@@ -320,7 +336,7 @@ end)
 local speedBox = Instance.new("TextBox")
 speedBox.Parent = screenGui
 speedBox.Size = UDim2.new(0, 200, 0, 50)
-speedBox.Position = UDim2.new(0, 10, 0, 250)
+speedBox.Position = UDim2.new(0, 10, 0, 310)
 speedBox.PlaceholderText = "Speed of fly"
 speedBox.Text = tostring(speed)
 speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -412,7 +428,7 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
 local spinning = false
-local spinSpeed = 1000  -- Скорость вращения (чем больше, тем быстрее)
+local spinSpeed = 100000  -- Скорость вращения (чем больше, тем быстрее)
 local connection
 
 -- Функция для включения спина
@@ -441,6 +457,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
             startSpin()  -- Включаем спин
         end
         spinning = not spinning  -- Переключаем состояние
+	spinBadge.Text = spinning and "Spin: on" or "Spin: off"
     end
 end)
 
