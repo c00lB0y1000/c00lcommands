@@ -95,7 +95,7 @@ helpWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
 local toggleHelpButton = Instance.new("TextButton")
 toggleHelpButton.Parent = screenGui
 toggleHelpButton.Size = UDim2.new(0, 200, 0, 50)
-toggleHelpButton.Position = UDim2.new(0, 100, 0, 70) 
+toggleHelpButton.Position = UDim2.new(0, 1000, 0, 70) 
 toggleHelpButton.Text = "hide help list"
 toggleHelpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleHelpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -136,7 +136,7 @@ supportWindow.TextWrapped = true  -- Автоперенос текста
 local togglesupportButton = Instance.new("TextButton")
 togglesupportButton.Parent = screenGui
 togglesupportButton.Size = UDim2.new(0, 200, 0, 50)
-togglesupportButton.Position = UDim2.new(0, 100, 0, 10) 
+togglesupportButton.Position = UDim2.new(0, 1000, 0, 10) 
 togglesupportButton.Text = "hide help list"
 togglesupportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 togglesupportButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -155,7 +155,21 @@ togglesupportButton.MouseButton1Click:Connect(function()
   togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
 end)
 
-
+-- Новый текстовый блок как бейджик
+local badgeText = Instance.new("TextLabel")
+badgeText.Parent = screenGui
+badgeText.Size = UDim2.new(0, 200, 0, 50)  -- Размер бейджика
+badgeText.Position = UDim2.new(0, 0, 0, 250)  -- Позиция (0, 10, 0, 250)
+badgeText.Text = "c00lB0yGUI"  -- Текст на бейджике
+badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Цвет текста
+badgeText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Цвет фона
+badgeText.BackgroundTransparency = 0.5  -- Прозрачность фона
+badgeText.TextSize = 18  -- Размер текста
+badgeText.Font = Enum.Font.GothamBold  -- Шрифт текста
+badgeText.TextXAlignment = Enum.TextXAlignment.Center  -- Выравнивание по горизонтали
+badgeText.TextYAlignment = Enum.TextYAlignment.Center  -- Выравнивание по вертикали
+badgeText.BorderSizePixel = 2  -- Размер границы
+badgeText.BorderColor3 = Color3.fromRGB(0, 255, 0)  -- Цвет границы
 
 -- Старт полёта
 local function startFlying()
