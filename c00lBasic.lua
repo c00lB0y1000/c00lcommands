@@ -169,6 +169,36 @@ togglesupportButton.MouseButton1Click:Connect(function()
   togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
 end)
 
+-- TextBox для ввода имени игрока
+local spectateInput = Instance.new("TextBox")
+spectateInput.Parent = screenGui
+spectateInput.Size = UDim2.new(0, 200, 0, 40)
+spectateInput.Position = UDim2.new(0, 700, 0, 130)
+spectateInput.PlaceholderText = "Enter username"
+spectateInput.Text = ""
+spectateInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+spectateInput.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+spectateInput.BackgroundTransparency = 0.5
+spectateInput.TextSize = 18
+spectateInput.Font = Enum.Font.GothamBold
+spectateInput.BorderSizePixel = 2
+spectateInput.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
+-- Кнопка активации спектейт режима
+local spectateButton = Instance.new("TextButton")
+spectateButton.Parent = screenGui
+spectateButton.Size = UDim2.new(0, 200, 0, 40)
+spectateButton.Position = UDim2.new(0, 700, 0, 180)
+spectateButton.Text = "Spectate"
+spectateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+spectateButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+spectateButton.BackgroundTransparency = 0.5
+spectateButton.TextSize = 18
+spectateButton.Font = Enum.Font.GothamBold
+spectateButton.BorderSizePixel = 2
+spectateButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
+
 -- Старт полёта
 local function startFlying()
   humanoid.PlatformStand = true
@@ -336,6 +366,23 @@ player.CharacterAdded:Connect(function(character)
     -- Останавливаем все действия, связанные с персонажем
     resetStatuses()
 end)
+
+spectateButton.MouseButton1Click:Connect(function()
+    local targetName = spectateInput.Text
+    local targetPlayer = Players:FindFirstChild(targetName)
+
+    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        workspace.CurrentCamera.CameraSubject = targetPlayer.Character:FindFirstChild("Humanoid")
+        workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+
+        supportWindow.Visible = true
+        supportWindow.Text = "Spectating: " .. targetName
+    else
+        supportWindow.Visible = true
+        supportWindow.Text = "Player not found or not loaded."
+    end
+end)
+
 
 -- Установка обычной скорости при старте
 humanoid.WalkSpeed = normalSpeed
