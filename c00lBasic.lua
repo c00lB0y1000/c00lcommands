@@ -91,22 +91,6 @@ sprintBadge.TextYAlignment = Enum.TextYAlignment.Center
 sprintBadge.BorderSizePixel = 2
 sprintBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 
--- Бейджик для спина
-local spinBadge = Instance.new("TextLabel")
-spinBadge.Parent = screenGui
-spinBadge.Size = UDim2.new(0, 200, 0, 50)
-spinBadge.Position = UDim2.new(0, 10, 0, 250)
-spinBadge.Text = "Spin: off"
-spinBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
-spinBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-spinBadge.BackgroundTransparency = 0.5
-spinBadge.TextSize = 18
-spinBadge.Font = Enum.Font.GothamBold
-spinBadge.TextXAlignment = Enum.TextXAlignment.Center
-spinBadge.TextYAlignment = Enum.TextYAlignment.Center
-spinBadge.BorderSizePixel = 2
-spinBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
-
 -- Окно с подсказками
 local helpWindow = Instance.new("TextLabel")
 helpWindow.Parent = screenGui
@@ -336,7 +320,7 @@ end)
 local speedBox = Instance.new("TextBox")
 speedBox.Parent = screenGui
 speedBox.Size = UDim2.new(0, 200, 0, 50)
-speedBox.Position = UDim2.new(0, 10, 0, 310)
+speedBox.Position = UDim2.new(0, 10, 0, 250)
 speedBox.PlaceholderText = "Speed of fly"
 speedBox.Text = tostring(speed)
 speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -409,52 +393,10 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
-local spinning = false
-local spinSpeed = 10000000000000  -- Скорость вращения (чем больше, тем быстрее)
-local connection
-
--- Находим торс игрока
-local torso = character:WaitForChild("UpperTorso") -- или "LowerTorso" для нижней части
-
--- Функция для включения спина
-local function startSpin()
-    connection = RunService.RenderStepped:Connect(function(dt)
-        -- Вращаем торс по осям X, Y и Z
-        torso.CFrame = torso.CFrame * CFrame.Angles(
-            math.rad(spinSpeed * dt),  -- Вращение по оси X
-            math.rad(spinSpeed * dt),  -- Вращение по оси Y
-            math.rad(spinSpeed * dt)   -- Вращение по оси Z
-        )
-    end)
-end
-
--- Функция для остановки спина
-local function stopSpin()
-    if connection then
-        connection:Disconnect()
-    end
-end
-
--- Включаем или останавливаем спин на H
-local UserInputService = game:GetService("UserInputService")
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-    if input.KeyCode == Enum.KeyCode.H then
-        if spinning then
-            stopSpin()  -- Останавливаем спин
-        else
-            startSpin()  -- Включаем спин
-        end
-        spinning = not spinning  -- Переключаем состояние
-	spinBadge.Text = spinning and "Spin: on" or "Spin: off"
-    end
-end)
-
 local function resetStatuses()
     flying = false
     noclip = false
     shiftHeld = false
-    spinning = false
     speed = 50
     	stopSpectateButton.MouseButton1Click:Connect(function()
     		workspace.CurrentCamera.CameraSubject = player.Character:FindFirstChild("Humanoid")
