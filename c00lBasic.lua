@@ -378,29 +378,6 @@ speedBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
-local function resetStatuses()
-    flying = false
-    noclip = false
-    shiftHeld = false
-    speed = 50
-    direction = Vector3.new()
-
-    -- Обновляем GUI
-    flightBadge.Text = "Fly: off"
-    noclipBadge.Text = "Noclip: off"
-    sprintBadge.Text = "Sprint: off"
-    humanoid.WalkSpeed = normalSpeed  -- Возвращаем обычную скорость
-end
-
--- Слушаем смерть персонажа
-player.CharacterAdded:Connect(function(character)
-    -- Удаляем старые объекты, связанные с полетом
-    if bodyGyro then bodyGyro:Destroy() end
-    if bodyVelocity then bodyVelocity:Destroy() end
-    -- Останавливаем все действия, связанные с персонажем
-    resetStatuses()
-end)
-
 spectateButton.MouseButton1Click:Connect(function()
     local targetName = spectateInput.Text
     local targetPlayer = Players:FindFirstChild(targetName)
@@ -473,6 +450,33 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
+local function resetStatuses()
+    flying = false
+    noclip = false
+    shiftHeld = false
+    spinning = false
+    speed = 50
+    	stopSpectateButton.MouseButton1Click:Connect(function()
+    		workspace.CurrentCamera.CameraSubject = player.Character:FindFirstChild("Humanoid")
+    		supportWindow.Text = "Spectate stopped"
+	end)
+    direction = Vector3.new()
+
+    -- Обновляем GUI
+    flightBadge.Text = "Fly: off"
+    noclipBadge.Text = "Noclip: off"
+    sprintBadge.Text = "Sprint: off"
+    humanoid.WalkSpeed = normalSpeed  -- Возвращаем обычную скорость
+end
+
+-- Слушаем смерть персонажа
+player.CharacterAdded:Connect(function(character)
+    -- Удаляем старые объекты, связанные с полетом
+    if bodyGyro then bodyGyro:Destroy() end
+    if bodyVelocity then bodyVelocity:Destroy() end
+    -- Останавливаем все действия, связанные с персонажем
+    resetStatuses()
+end)
 
 
 -- Установка обычной скорости при старте
