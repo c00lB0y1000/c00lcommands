@@ -427,15 +427,27 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+
 local spinning = false
-local spinSpeed = 1000000000  -- Скорость вращения (чем больше, тем быстрее)
+local spinSpeed = 10000000000000  -- Скорость вращения (чем больше, тем быстрее)
 local connection
+
+-- Находим торс игрока
+local torso = character:WaitForChild("UpperTorso") -- или "LowerTorso" для нижней части
 
 -- Функция для включения спина
 local function startSpin()
-    local root = character:WaitForChild("HumanoidRootPart")
     connection = RunService.RenderStepped:Connect(function(dt)
-        root.CFrame = root.CFrame * CFrame.Angles(0, math.rad(spinSpeed * dt), 0)
+        -- Вращаем торс по осям X, Y и Z
+        torso.CFrame = torso.CFrame * CFrame.Angles(
+            math.rad(spinSpeed * dt),  -- Вращение по оси X
+            math.rad(spinSpeed * dt),  -- Вращение по оси Y
+            math.rad(spinSpeed * dt)   -- Вращение по оси Z
+        )
     end)
 end
 
@@ -460,6 +472,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
 	spinBadge.Text = spinning and "Spin: on" or "Spin: off"
     end
 end)
+
 
 
 -- Установка обычной скорости при старте
