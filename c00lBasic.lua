@@ -114,6 +114,45 @@ toggleHelpButton.MouseButton1Click:Connect(function()
   toggleHelpButton.Text = helpVisible and "hide help list" or "show help list"
 end)
 
+-- Окно с подсказками
+local supportWindow = Instance.new("TextLabel")
+supportWindow.Parent = screenGui
+supportWindow.Size = UDim2.new(0, 300, 0, 150)
+supportWindow.Position = UDim2.new(0, 220, 0, 10)
+supportWindow.Text = "я прост помощник"
+supportWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
+supportWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+supportWindow.BackgroundTransparency = 0.5
+supportWindow.TextSize = 18
+supportWindow.Font = Enum.Font.GothamBold
+supportWindow.TextXAlignment = Enum.TextXAlignment.Left
+supportWindow.TextYAlignment = Enum.TextYAlignment.Top
+supportWindow.BorderSizePixel = 2
+supportWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
+-- Кнопка для сворачивания окна с подсказками
+local togglesupportButton = Instance.new("TextButton")
+togglesupportButton.Parent = screenGui
+togglesupportButton.Size = UDim2.new(0, 200, 0, 50)
+togglesupportButton.Position = UDim2.new(0, 10, 0, 310) 
+togglesupportButton.Text = "hide help list"
+togglesupportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+togglesupportButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+togglesupportButton.BackgroundTransparency = 0.5
+togglesupportButton.TextSize = 18
+togglesupportButton.Font = Enum.Font.GothamBold
+togglesupportButton.TextXAlignment = Enum.TextXAlignment.Center
+togglesupportButton.TextYAlignment = Enum.TextYAlignment.Center
+togglesupportButton.BorderSizePixel = 2
+togglesupportButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
+local supportVisible = false
+togglesupportButton.MouseButton1Click:Connect(function()
+  supportVisible = not supportVisible
+  supportWindow.Visible = supportVisible
+  togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
+end)
+
 
 -- Старт полёта
 local function startFlying()
