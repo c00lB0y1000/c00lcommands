@@ -130,23 +130,41 @@ toggleHelpButton.MouseButton1Click:Connect(function()
   toggleHelpButton.Text = helpVisible and "hide help list" or "show help list"
 end)
 
--- Окно с подсказками
-local supportWindow = Instance.new("TextLabel")
+-- Прокручиваемое окно
+local supportWindow = Instance.new("ScrollingFrame")
 supportWindow.Parent = screenGui
 supportWindow.Size = UDim2.new(0, 300, 0, 150)
 supportWindow.Position = UDim2.new(0, 220, 0, 10)
-supportWindow.Text = "Work in\n Full: natural disaster survival, prison life\n Dont work 1 function: The Strongest Batleground(Fly), Murder Mystery 2(Fly)"
-supportWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
 supportWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 supportWindow.BackgroundTransparency = 0.5
-supportWindow.TextSize = 18
-supportWindow.Font = Enum.Font.GothamBold
-supportWindow.TextXAlignment = Enum.TextXAlignment.Left
-supportWindow.TextYAlignment = Enum.TextYAlignment.Top
 supportWindow.BorderSizePixel = 2
 supportWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
-supportWindow.Visible = false  -- Изначально окно невидимо
-supportWindow.TextWrapped = true  -- Автоперенос текста
+supportWindow.Visible = false
+supportWindow.CanvasSize = UDim2.new(0, 0, 0, 0) -- позже обновим
+supportWindow.ScrollBarThickness = 8 -- толщина полосы прокрутки
+
+-- Внутренний текст
+local supportText = Instance.new("TextLabel")
+supportText.Parent = supportWindow
+supportText.Size = UDim2.new(1, -10, 0, 0) -- ширина с отступом, высоту обновим позже
+supportText.Position = UDim2.new(0, 5, 0, 0)
+supportText.BackgroundTransparency = 1
+supportText.TextColor3 = Color3.fromRGB(255, 255, 255)
+supportText.TextSize = 18
+supportText.Font = Enum.Font.GothamBold
+supportText.TextXAlignment = Enum.TextXAlignment.Left
+supportText.TextYAlignment = Enum.TextYAlignment.Top
+supportText.TextWrapped = true
+supportText.Text = [[
+АААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
+ещё больше текста...
+и ещё...
+]]
+
+-- Автоматическое изменение высоты и прокрутки
+supportText.Size = UDim2.new(1, -10, 0, supportText.TextBounds.Y)
+supportWindow.CanvasSize = UDim2.new(0, 0, 0, supportText.TextBounds.Y + 10)
+
 
 -- Кнопка для сворачивания окна с подсказками
 local togglesupportButton = Instance.new("TextButton")
@@ -291,8 +309,8 @@ end)
 -- Поле для ввода скорости полёта
 local speedBox = Instance.new("TextBox")
 speedBox.Parent = screenGui
-speedBox.Size = UDim2.new(0, 200, 0, 40)
-speedBox.Position = UDim2.new(0, 10, 0, 190)
+speedBox.Size = UDim2.new(0, 200, 0, 50)
+speedBox.Position = UDim2.new(0, 10, 0, 250)
 speedBox.PlaceholderText = "Speed of fly"
 speedBox.Text = tostring(speed)
 speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
