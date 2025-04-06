@@ -333,6 +333,24 @@ speedBox.ClearTextOnFocus = false
 speedBox.BorderSizePixel = 2
 speedBox.BorderColor3 = Color3.fromRGB(0, 255, 255)
 
+local stopSpectateButton = Instance.new("TextButton")
+stopSpectateButton.Parent = screenGui
+stopSpectateButton.Size = UDim2.new(0, 200, 0, 40)
+stopSpectateButton.Position = UDim2.new(0, 700, 0, 230)
+stopSpectateButton.Text = "Stop Spectate"
+stopSpectateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+stopSpectateButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+stopSpectateButton.BackgroundTransparency = 0.5
+stopSpectateButton.TextSize = 18
+stopSpectateButton.Font = Enum.Font.GothamBold
+stopSpectateButton.BorderSizePixel = 2
+stopSpectateButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
+
+stopSpectateButton.MouseButton1Click:Connect(function()
+    workspace.CurrentCamera.CameraSubject = player.Character:FindFirstChild("Humanoid")
+    supportWindow.Text = "Spectate stopped"
+end)
+
 speedBox.FocusLost:Connect(function(enterPressed)
 	if enterPressed then
 		local newSpeed = tonumber(speedBox.Text)
@@ -382,6 +400,22 @@ spectateButton.MouseButton1Click:Connect(function()
         supportWindow.Text = "Player not found or not loaded."
     end
 end)
+togglesupportButton.MouseButton1Click:Connect(function()
+	supportVisible = not supportVisible
+	supportWindow.Visible = supportVisible
+	togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
+
+	if supportVisible then
+		task.delay(3, function()
+			if supportVisible then
+				supportVisible = false
+				supportWindow.Visible = false
+				togglesupportButton.Text = "show support list"
+			end
+		end)
+	end
+end)
+
 
 
 -- Установка обычной скорости при старте
