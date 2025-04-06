@@ -260,5 +260,28 @@ speedBox.FocusLost:Connect(function(enterPressed)
 	end
 end)
 
+local function resetStatuses()
+    flying = false
+    noclip = false
+    shiftHeld = false
+    speed = 50
+    direction = Vector3.new()
+
+    -- Обновляем GUI
+    flightBadge.Text = "Fly: off"
+    noclipBadge.Text = "Noclip: off"
+    sprintBadge.Text = "Sprint: off"
+    humanoid.WalkSpeed = normalSpeed  -- Возвращаем обычную скорость
+end
+
+-- Слушаем смерть персонажа
+player.CharacterAdded:Connect(function(character)
+    -- Удаляем старые объекты, связанные с полетом
+    if bodyGyro then bodyGyro:Destroy() end
+    if bodyVelocity then bodyVelocity:Destroy() end
+    -- Останавливаем все действия, связанные с персонажем
+    resetStatuses()
+end)
+
 -- Установка обычной скорости при старте
 humanoid.WalkSpeed = normalSpeed
