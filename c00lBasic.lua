@@ -27,11 +27,27 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player.PlayerGui
 screenGui.Enabled = true  -- Убедимся, что GUI по умолчанию всегда видим
 
+-- Новый текстовый блок как бейджик
+local badgeText = Instance.new("TextLabel")
+badgeText.Parent = screenGui
+badgeText.Size = UDim2.new(0, 200, 0, 50)  -- Размер бейджика
+badgeText.Position = UDim2.new(0, 10, 0, 10)  -- Позиция (0, 10, 0, 250)
+badgeText.Text = "c00lB0yGUI"  -- Текст на бейджике
+badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Цвет текста
+badgeText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Цвет фона
+badgeText.BackgroundTransparency = 0.5  -- Прозрачность фона
+badgeText.TextSize = 18  -- Размер текста
+badgeText.Font = Enum.Font.GothamBold  -- Шрифт текста
+badgeText.TextXAlignment = Enum.TextXAlignment.Center  -- Выравнивание по горизонтали
+badgeText.TextYAlignment = Enum.TextYAlignment.Center  -- Выравнивание по вертикали
+badgeText.BorderSizePixel = 2  -- Размер границы
+badgeText.BorderColor3 = Color3.fromRGB(0, 255, 0)  -- Цвет границы
+
 -- Бейджик для полёта
 local flightBadge = Instance.new("TextLabel")
 flightBadge.Parent = screenGui
 flightBadge.Size = UDim2.new(0, 200, 0, 50)
-flightBadge.Position = UDim2.new(0, 10, 0, 10)
+flightBadge.Position = UDim2.new(0, 10, 0, 70)
 flightBadge.Text = "Fly: off"
 flightBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
 flightBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -46,7 +62,7 @@ flightBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 -- Бейджик для ноуклипа
 local noclipBadge = Instance.new("TextLabel")
 noclipBadge.Parent = screenGui
-noclipBadge.Size = UDim2.new(0, 200, 0, 50)
+noclipBadge.Size = UDim2.new(0, 200, 0, 130)
 noclipBadge.Position = UDim2.new(0, 10, 0, 70)
 noclipBadge.Text = "Noclip: off"
 noclipBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -63,7 +79,7 @@ noclipBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 local sprintBadge = Instance.new("TextLabel")
 sprintBadge.Parent = screenGui
 sprintBadge.Size = UDim2.new(0, 200, 0, 50)
-sprintBadge.Position = UDim2.new(0, 10, 0, 130)
+sprintBadge.Position = UDim2.new(0, 10, 0, 190)
 sprintBadge.Text = "Sprint: off"
 sprintBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
 sprintBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -154,22 +170,6 @@ togglesupportButton.MouseButton1Click:Connect(function()
   supportWindow.Visible = supportVisible
   togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
 end)
-
--- Новый текстовый блок как бейджик
-local badgeText = Instance.new("TextLabel")
-badgeText.Parent = screenGui
-badgeText.Size = UDim2.new(0, 200, 0, 50)  -- Размер бейджика
-badgeText.Position = UDim2.new(0, 10, 0, 210)  -- Позиция (0, 10, 0, 250)
-badgeText.Text = "c00lB0yGUI"  -- Текст на бейджике
-badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)  -- Цвет текста
-badgeText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Цвет фона
-badgeText.BackgroundTransparency = 0.5  -- Прозрачность фона
-badgeText.TextSize = 18  -- Размер текста
-badgeText.Font = Enum.Font.GothamBold  -- Шрифт текста
-badgeText.TextXAlignment = Enum.TextXAlignment.Center  -- Выравнивание по горизонтали
-badgeText.TextYAlignment = Enum.TextYAlignment.Center  -- Выравнивание по вертикали
-badgeText.BorderSizePixel = 2  -- Размер границы
-badgeText.BorderColor3 = Color3.fromRGB(0, 255, 0)  -- Цвет границы
 
 -- Старт полёта
 local function startFlying()
