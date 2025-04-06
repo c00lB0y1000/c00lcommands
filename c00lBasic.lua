@@ -130,7 +130,7 @@ toggleHelpButton.MouseButton1Click:Connect(function()
   toggleHelpButton.Text = helpVisible and "hide help list" or "show help list"
 end)
 
--- Прокручиваемое окно
+-- ScrollingFrame (прокручиваемое окно)
 local supportWindow = Instance.new("ScrollingFrame")
 supportWindow.Parent = screenGui
 supportWindow.Size = UDim2.new(0, 300, 0, 150)
@@ -140,13 +140,20 @@ supportWindow.BackgroundTransparency = 0.5
 supportWindow.BorderSizePixel = 2
 supportWindow.BorderColor3 = Color3.fromRGB(0, 255, 0)
 supportWindow.Visible = false
-supportWindow.CanvasSize = UDim2.new(0, 0, 0, 0) -- позже обновим
-supportWindow.ScrollBarThickness = 8 -- толщина полосы прокрутки
+supportWindow.ScrollBarThickness = 8
+supportWindow.CanvasSize = UDim2.new(0, 0, 0, 0)
+supportWindow.AutomaticCanvasSize = Enum.AutomaticSize.Y
+supportWindow.ClipsDescendants = true
 
--- Внутренний текст
+-- UIListLayout нужен, чтобы поддерживалась прокрутка корректно
+local layout = Instance.new("UIListLayout")
+layout.Parent = supportWindow
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Вложенный TextLabel
 local supportText = Instance.new("TextLabel")
 supportText.Parent = supportWindow
-supportText.Size = UDim2.new(1, -10, 0, 0) -- ширина с отступом, высоту обновим позже
+supportText.Size = UDim2.new(1, -10, 0, 0)
 supportText.Position = UDim2.new(0, 5, 0, 0)
 supportText.BackgroundTransparency = 1
 supportText.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -155,15 +162,20 @@ supportText.Font = Enum.Font.GothamBold
 supportText.TextXAlignment = Enum.TextXAlignment.Left
 supportText.TextYAlignment = Enum.TextYAlignment.Top
 supportText.TextWrapped = true
+supportText.TextScaled = false
 supportText.Text = [[
 АААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААААА
-ещё больше текста...
-и ещё...
+
+Абзац 1: Привет! Это прокручиваемый текст.
+Абзац 2: Здесь можно писать много текста и он не вылезет за рамки.
+Абзац 3: Работает скроллинг, перенос строк и всё как надо!
 ]]
 
--- Автоматическое изменение высоты и прокрутки
+-- Авто-высота под текст и обновление CanvasSize
+task.wait() -- подождать один кадр, чтобы TextBounds обновился
 supportText.Size = UDim2.new(1, -10, 0, supportText.TextBounds.Y)
 supportWindow.CanvasSize = UDim2.new(0, 0, 0, supportText.TextBounds.Y + 10)
+
 
 
 -- Кнопка для сворачивания окна с подсказками
