@@ -32,7 +32,7 @@ local flightBadge = Instance.new("TextLabel")
 flightBadge.Parent = screenGui
 flightBadge.Size = UDim2.new(0, 200, 0, 50)
 flightBadge.Position = UDim2.new(0, 10, 0, 10)
-flightBadge.Text = "Fly: off"
+flightBadge.Text = "Полёт: Отключен"
 flightBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
 flightBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 flightBadge.BackgroundTransparency = 0.5
@@ -48,7 +48,7 @@ local noclipBadge = Instance.new("TextLabel")
 noclipBadge.Parent = screenGui
 noclipBadge.Size = UDim2.new(0, 200, 0, 50)
 noclipBadge.Position = UDim2.new(0, 10, 0, 70)
-noclipBadge.Text = "Noclip: off"
+noclipBadge.Text = "Ноуклип: Отключен"
 noclipBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
 noclipBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 noclipBadge.BackgroundTransparency = 0.5
@@ -64,7 +64,7 @@ local sprintBadge = Instance.new("TextLabel")
 sprintBadge.Parent = screenGui
 sprintBadge.Size = UDim2.new(0, 200, 0, 50)
 sprintBadge.Position = UDim2.new(0, 10, 0, 130)
-sprintBadge.Text = "Sprint: off"
+sprintBadge.Text = "Спринт: Отключен"
 sprintBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
 sprintBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 sprintBadge.BackgroundTransparency = 0.5
@@ -80,7 +80,7 @@ local helpWindow = Instance.new("TextLabel")
 helpWindow.Parent = screenGui
 helpWindow.Size = UDim2.new(0, 300, 0, 150)
 helpWindow.Position = UDim2.new(0, 220, 0, 10)
-helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor"
+helpWindow.Text = "Клавиши управления:\nF - Полёт\nR - Ноуклип\nShift - Спринт\nT - Телепорт по мышке"
 helpWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
 helpWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 helpWindow.BackgroundTransparency = 0.5
@@ -96,7 +96,7 @@ local toggleHelpButton = Instance.new("TextButton")
 toggleHelpButton.Parent = screenGui
 toggleHelpButton.Size = UDim2.new(0, 200, 0, 50)
 toggleHelpButton.Position = UDim2.new(0, 10, 0, 250) 
-toggleHelpButton.Text = "hide help list"
+toggleHelpButton.Text = "Свернуть подсказки"
 toggleHelpButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleHelpButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 toggleHelpButton.BackgroundTransparency = 0.5
@@ -111,7 +111,7 @@ local helpVisible = true
 toggleHelpButton.MouseButton1Click:Connect(function()
   helpVisible = not helpVisible
   helpWindow.Visible = helpVisible
-  toggleHelpButton.Text = helpVisible and "hide help list" or "show help list"
+  toggleHelpButton.Text = helpVisible and "Свернуть подсказки" or "Развернуть подсказки"
 end)
 
 
@@ -136,7 +136,7 @@ local function startFlying()
   end)
 
   -- Обновление GUI
-  flightBadge.Text = "Fly: on"
+  flightBadge.Text = "Полёт: Включен"
 end
 
 -- Остановка полёта
@@ -147,7 +147,7 @@ local function stopFlying()
   humanoid.PlatformStand = false
 
   -- Обновление GUI
-  flightBadge.Text = "Fly: off"
+  flightBadge.Text = "Полёт: Отключен"
 end
 
 -- Ноуклип
@@ -180,7 +180,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
   -- Ноуклип
   if key == Enum.KeyCode.R then
     noclip = not noclip
-    noclipBadge.Text = noclip and "Noclip: on" or "Noclip: off"
+    noclipBadge.Text = noclip and "Ноуклип: Включен" or "Ноуклип: Отключен"
   end
 
   -- Телепорт по мышке
@@ -212,7 +212,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     shiftHeld = true
     if humanoid then
       humanoid.WalkSpeed = sprintSpeed
-      sprintBadge.Text = "Sprint: on"
+      sprintBadge.Text = "Спринт: Включен"
     end
   end
 end)
@@ -227,7 +227,7 @@ UserInputService.InputEnded:Connect(function(input)
     shiftHeld = false
     if humanoid then
       humanoid.WalkSpeed = normalSpeed
-      sprintBadge.Text = "Sprint: off"
+      sprintBadge.Text = "Спринт: Отключен"
     end
   end
 end)
@@ -237,7 +237,7 @@ local speedBox = Instance.new("TextBox")
 speedBox.Parent = screenGui
 speedBox.Size = UDim2.new(0, 200, 0, 40)
 speedBox.Position = UDim2.new(0, 10, 0, 190)
-speedBox.PlaceholderText = "Speed of fly"
+speedBox.PlaceholderText = "Скорость полёта"
 speedBox.Text = tostring(speed)
 speedBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 speedBox.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
