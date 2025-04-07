@@ -250,6 +250,19 @@ Players.PlayerAdded:Connect(function(player)
     			workspace.CurrentCamera.CameraSubject = player.Character:FindFirstChild("Humanoid")
     			supportWindow.Text = "Spectate stopped"
 		end)
+		spectateButton.MouseButton1Click:Connect(function()
+    		local targetName = spectateInput.Text
+    		local targetPlayer = Players:FindFirstChild(targetName)
+
+    		if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        		workspace.CurrentCamera.CameraSubject = targetPlayer.Character:FindFirstChild("Humanoid")
+        		workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+
+        		print("Spectating: " .. targetName)
+    		else
+        		print("Player not found or not loaded.")
+    		    end
+		end)
 
         end
     end)
@@ -370,20 +383,6 @@ UserInputService.InputEnded:Connect(function(input)
       sprintBadge.Text = "Sprint: off"
     end
   end
-end)
-
-spectateButton.MouseButton1Click:Connect(function()
-    local targetName = spectateInput.Text
-    local targetPlayer = Players:FindFirstChild(targetName)
-
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        workspace.CurrentCamera.CameraSubject = targetPlayer.Character:FindFirstChild("Humanoid")
-        workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-
-        print("Spectating: " .. targetName)
-    else
-        print("Player not found or not loaded.")
-    end
 end)
 
 local Players = game:GetService("Players")
