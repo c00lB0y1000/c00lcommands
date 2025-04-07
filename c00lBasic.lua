@@ -222,6 +222,17 @@ Players.PlayerAdded:Connect(function(player)
 		speedBox.BorderSizePixel = 2
 		speedBox.BorderColor3 = Color3.fromRGB(0, 255, 255)
 
+		speedBox.FocusLost:Connect(function(enterPressed)
+			if enterPressed then
+				local newSpeed = tonumber(speedBox.Text)
+				if newSpeed then
+					speed = newSpeed
+				else
+					speedBox.Text = tostring(speed) -- сброс если ввод неверный
+				end
+			end
+		end)
+
 		local stopSpectateButton = Instance.new("TextButton")
 		stopSpectateButton.Parent = screenGui
 		stopSpectateButton.Size = UDim2.new(0, 200, 0, 40)
@@ -359,19 +370,6 @@ UserInputService.InputEnded:Connect(function(input)
       sprintBadge.Text = "Sprint: off"
     end
   end
-end)
-
-
-
-speedBox.FocusLost:Connect(function(enterPressed)
-	if enterPressed then
-		local newSpeed = tonumber(speedBox.Text)
-		if newSpeed then
-			speed = newSpeed
-		else
-			speedBox.Text = tostring(speed) -- сброс если ввод неверный
-		end
-	end
 end)
 
 spectateButton.MouseButton1Click:Connect(function()
