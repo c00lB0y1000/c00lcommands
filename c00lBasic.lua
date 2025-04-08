@@ -1,3 +1,5 @@
+
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -19,7 +21,7 @@ local normalSpeed = 16
 local sprintSpeed = 32
 local espEnabled = false
 local beams = {}
-local originalTransparency = {}
+local originalTransparency = {} -- для восстановления прозрачности
 
 local screenGui
 
@@ -33,7 +35,7 @@ local function setupGUIAndConnections()
     badgeText.Parent = screenGui
     badgeText.Size = UDim2.new(0, 200, 0, 50)
     badgeText.Position = UDim2.new(0, 10, 0, 10)
-    badgeText.Text = "c00lB0yBasic"
+    badgeText.Text = "c00lB0yGUI"
     badgeText.TextColor3 = Color3.fromRGB(255, 255, 255)
     badgeText.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     badgeText.BackgroundTransparency = 0.5
@@ -183,7 +185,7 @@ local function setupGUIAndConnections()
     local spectateInput = Instance.new("TextBox")
     spectateInput.Parent = screenGui
     spectateInput.Size = UDim2.new(0, 200, 0, 40)
-    spectateInput.Position = UDim2.new(0, 700, 0, 120)
+    spectateInput.Position = UDim2.new(0, 700, 0, 310)
     spectateInput.PlaceholderText = "Enter username"
     spectateInput.Text = ""
     spectateInput.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -371,7 +373,24 @@ local function setupGUIAndConnections()
         end
     end)
 
-    local function createESPLine(fromPart, toPart, targetPlayer)
+    local function applyWallhack(character)
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                originalTransparency[part] = part.Transparency
+                part.Transparency = 0.7
+            end
+        end
+    end
+    
+    local function removeWallhack(character)
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and originalTransparency[part] ~= nil then
+                part.Transparency = originalTransparency[part]
+            end
+        end
+    end
+    
+    local function createESPLine(fromPart, toPart)
         local attachment0 = Instance.new("Attachment", fromPart)
         local attachment1 = Instance.new("Attachment", toPart)
     
@@ -388,8 +407,7 @@ local function setupGUIAndConnections()
         table.insert(beams, {
             beam = beam,
             attachment0 = attachment0,
-            attachment1 = attachment1,
-            targetPlayer = targetPlayer
+            attachment1 = attachment1
         })
     
         espBadge.Text = "ESP: on"
@@ -403,16 +421,11 @@ local function setupGUIAndConnections()
         end
         beams = {}
     
-        for part, oldValue in pairs(originalTransparency) do
-            if part and part:IsA("BasePart") then
-                part.Transparency = oldValue
+        -- убираем прозрачность
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= player and plr.Character then
+                removeWallhack(plr.Character)
             end
-        end
-        originalTransparency = {}
-    
-        if updateConnection then
-            updateConnection:Disconnect()
-            updateConnection = nil
         end
     
         espBadge.Text = "ESP: off"
@@ -423,33 +436,35 @@ local function setupGUIAndConnections()
         clearESP()
     
         if espEnabled then
-            applyWallhack()
-    
-            -- Создаём изначальные лучи
             for _, otherPlayer in ipairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart, otherPlayer)
+                    createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
+                    applyWallhack(otherPlayer.Character)
                 end
             end
-    
-            -- Цикл обновления ESP
-            updateConnection = RunService.RenderStepped:Connect(function()
-                for _, obj in ipairs(beams) do
-                    local targetChar = obj.targetPlayer.Character
-                    if targetChar and targetChar:FindFirstChild("HumanoidRootPart") then
-                        obj.attachment1.Position = targetChar.HumanoidRootPart.Position - obj.attachment1.Parent.Position
-                    end
-                end
-            end)
         end
     end
     
-    -- Клавиша Z для включения ESP
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.KeyCode == Enum.KeyCode.Z then
+    -- обновление при новых игроках
+    Players.PlayerAdded:Connect(function(newPlayer)
+        newPlayer.CharacterAdded:Connect(function()
+            if espEnabled then
+                task.wait(1)
+                if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
+                    applyWallhack(newPlayer.Character)
+                end
+            end
+        end)
+    end)
+    
+    -- пример кнопки на клавишу "F"
+    game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.F then
             toggleESP()
         end
     end)
+    
 end
 
 RunService.Stepped:Connect(function()
