@@ -1,5 +1,4 @@
 
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -21,7 +20,7 @@ local normalSpeed = 16
 local sprintSpeed = 32
 local espEnabled = false
 local beams = {}
-local originalTransparency = {} -- для восстановления прозрачности
+local originalTransparency = {}
 
 local screenGui
 
@@ -373,23 +372,6 @@ local function setupGUIAndConnections()
         end
     end)
 
-    local function applyWallhack(character)
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                originalTransparency[part] = part.Transparency
-                part.Transparency = 0.7
-            end
-        end
-    end
-    
-    local function removeWallhack(character)
-        for _, part in ipairs(character:GetDescendants()) do
-            if part:IsA("BasePart") and originalTransparency[part] ~= nil then
-                part.Transparency = originalTransparency[part]
-            end
-        end
-    end
-    
     local function createESPLine(fromPart, toPart)
         local attachment0 = Instance.new("Attachment", fromPart)
         local attachment1 = Instance.new("Attachment", toPart)
@@ -413,6 +395,7 @@ local function setupGUIAndConnections()
         espBadge.Text = "ESP: on"
     end
     
+    -- Очистка ESP
     local function clearESP()
         for _, obj in ipairs(beams) do
             if obj.beam then obj.beam:Destroy() end
@@ -421,16 +404,28 @@ local function setupGUIAndConnections()
         end
         beams = {}
     
-        -- убираем прозрачность
-        for _, plr in ipairs(Players:GetPlayers()) do
-            if plr ~= player and plr.Character then
-                removeWallhack(plr.Character)
+        -- Возврат прозрачности деталей Workspace
+        for part, oldValue in pairs(originalTransparency) do
+            if part and part:IsA("BasePart") then
+                part.Transparency = oldValue
             end
         end
+        originalTransparency = {}
     
         espBadge.Text = "ESP: off"
     end
     
+    -- Воллхак — делает все детали в Workspace полупрозрачными
+    local function applyWallhack()
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
+                originalTransparency[obj] = obj.Transparency
+                obj.Transparency = 0.7
+            end
+        end
+    end
+    
+    -- Включение/выключение ESP
     local function toggleESP()
         espEnabled = not espEnabled
         clearESP()
@@ -439,32 +434,30 @@ local function setupGUIAndConnections()
             for _, otherPlayer in ipairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
-                    applyWallhack(otherPlayer.Character)
                 end
             end
+            applyWallhack()
         end
     end
     
-    -- обновление при новых игроках
+    -- Обработка новых игроков
     Players.PlayerAdded:Connect(function(newPlayer)
         newPlayer.CharacterAdded:Connect(function()
             if espEnabled then
                 task.wait(1)
                 if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
-                    applyWallhack(newPlayer.Character)
                 end
             end
         end)
     end)
     
-    -- пример кнопки на клавишу "F"
-    game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.KeyCode == Enum.KeyCode.F then
+    -- Клавиша Z для включения ESP
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.Z then
             toggleESP()
         end
     end)
-    
 end
 
 RunService.Stepped:Connect(function()
