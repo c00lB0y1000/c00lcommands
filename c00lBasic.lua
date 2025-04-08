@@ -18,6 +18,7 @@ local noclip = false
 local shiftHeld = false
 local normalSpeed = 16
 local sprintSpeed = 32
+local espEnabled = false
 
 local screenGui
 
@@ -91,7 +92,7 @@ local function setupGUIAndConnections()
     helpWindow.Parent = screenGui
     helpWindow.Size = UDim2.new(0, 300, 0, 150)
     helpWindow.Position = UDim2.new(0, 220, 0, 10)
-    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor"
+    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\Z - ESP"
     helpWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
     helpWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     helpWindow.BackgroundTransparency = 0.5
@@ -163,10 +164,25 @@ local function setupGUIAndConnections()
         togglesupportButton.Text = supportVisible and "hide support list" or "show support list"
     end)
 
+    local espBadge = Instance.new("TextLabel")
+    espBadge.Parent = screenGui
+    espBadge.Size = UDim2.new(0, 200, 0, 50)
+    espBadge.Position = UDim2.new(0, 10, 0, 70)
+    espBadge.Text = "ESP: off"
+    espBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+    espBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    espBadge.BackgroundTransparency = 0.5
+    espBadge.TextSize = 18
+    espBadge.Font = Enum.Font.GothamBold
+    espBadge.TextXAlignment = Enum.TextXAlignment.Center
+    espBadge.TextYAlignment = Enum.TextYAlignment.Center
+    espBadge.BorderSizePixel = 2
+    espBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
     local spectateInput = Instance.new("TextBox")
     spectateInput.Parent = screenGui
     spectateInput.Size = UDim2.new(0, 200, 0, 40)
-    spectateInput.Position = UDim2.new(0, 700, 0, 130)
+    spectateInput.Position = UDim2.new(0, 700, 0, 310)
     spectateInput.PlaceholderText = "Enter username"
     spectateInput.Text = ""
     spectateInput.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -234,6 +250,7 @@ local function setupGUIAndConnections()
             end
         end
     end)
+
 
     spectateButton.MouseButton1Click:Connect(function()
         local targetName = spectateInput.Text
@@ -352,6 +369,75 @@ local function setupGUIAndConnections()
             end
         end
     end)
+
+    local beams = {}
+
+    local function createESPLine(fromPart, toPart)
+        local attachment0 = Instance.new("Attachment", fromPart)
+        local attachment1 = Instance.new("Attachment", toPart)
+
+        local beam = Instance.new("Beam")
+        beam.Attachment0 = attachment0
+        beam.Attachment1 = attachment1
+        beam.Color = ColorSequence.new(Color3.new(0, 1, 0)) -- зелёный
+        beam.Width0 = 0.1
+        beam.Width1 = 0.1
+        beam.FaceCamera = true
+        beam.LightEmission = 1
+        beam.Parent = fromPart
+
+        table.insert(beams, {
+            beam = beam,
+            attachment0 = attachment0,
+            attachment1 = attachment1
+        })
+
+        espBadge.Text = "ESP: on"
+    end
+
+    local function clearESP()
+        for _, obj in ipairs(beams) do
+            if obj.beam then obj.beam:Destroy() end
+            if obj.attachment0 then obj.attachment0:Destroy() end
+            if obj.attachment1 then obj.attachment1:Destroy() end
+        end
+        beams = {}
+        espBadge.Text = "ESP: off"
+    end
+
+    local function toggleESP()
+        espEnabled = not espEnabled
+        clearESP()
+
+        if espEnabled then
+            for _, otherPlayer in ipairs(Players:GetPlayers()) do
+                if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
+                end
+            end
+        end
+    end
+
+-- обновление ESP при появлении новых игроков
+    Players.PlayerAdded:Connect(function(newPlayer)
+        newPlayer.CharacterAdded:Connect(function()
+            if espEnabled then
+                task.wait(1)
+                if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
+                end
+            end
+        end)
+    end)
+
+    -- нажатие клавиши Z
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.KeyCode == Enum.KeyCode.Z then
+            toggleESP()
+        end
+    end)
+    
 end
 
 RunService.Stepped:Connect(function()
