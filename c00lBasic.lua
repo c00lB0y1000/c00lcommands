@@ -249,6 +249,39 @@ local function setupGUIAndConnections()
         end
     end)
 
+    local function startFlying()
+        humanoid.PlatformStand = true
+    
+        bodyGyro = Instance.new("BodyGyro")
+        bodyGyro.P = 9e4
+        bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+        bodyGyro.CFrame = humanoidRootPart.CFrame
+        bodyGyro.Parent = humanoidRootPart
+    
+        bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+        bodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        bodyVelocity.Parent = humanoidRootPart
+    
+        RunService:BindToRenderStep("Flying", Enum.RenderPriority.Input.Value, function()
+            bodyGyro.CFrame = workspace.CurrentCamera.CFrame
+            bodyVelocity.Velocity = workspace.CurrentCamera.CFrame:VectorToWorldSpace(direction * speed)
+        end)
+    
+        print("Flight started")
+        flightBadge.Text = "Fly: on"
+    end
+    
+    local function stopFlying()
+        if bodyGyro then bodyGyro:Destroy() end
+        if bodyVelocity then bodyVelocity:Destroy() end
+        RunService:UnbindFromRenderStep("Flying")
+        humanoid.PlatformStand = false
+    
+        print("Flight stopped")
+        flightBadge.Text = "Fly: off"
+    end
+
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
 
@@ -296,7 +329,7 @@ local function setupGUIAndConnections()
                 humanoidRootPart.CFrame = CFrame.new(newPosition)
             end
         end
-        
+
         if key == Enum.KeyCode.LeftShift then
             shiftHeld = true
             if humanoid then
@@ -321,38 +354,7 @@ local function setupGUIAndConnections()
     end)
 end
 
-local function startFlying()
-    humanoid.PlatformStand = true
 
-    bodyGyro = Instance.new("BodyGyro")
-    bodyGyro.P = 9e4
-    bodyGyro.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-    bodyGyro.CFrame = humanoidRootPart.CFrame
-    bodyGyro.Parent = humanoidRootPart
-
-    bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-    bodyVelocity.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-    bodyVelocity.Parent = humanoidRootPart
-
-    RunService:BindToRenderStep("Flying", Enum.RenderPriority.Input.Value, function()
-        bodyGyro.CFrame = workspace.CurrentCamera.CFrame
-        bodyVelocity.Velocity = workspace.CurrentCamera.CFrame:VectorToWorldSpace(direction * speed)
-    end)
-
-    print("Flight started")
-    flightBadge.Text = "Fly: on"
-end
-
-local function stopFlying()
-    if bodyGyro then bodyGyro:Destroy() end
-    if bodyVelocity then bodyVelocity:Destroy() end
-    RunService:UnbindFromRenderStep("Flying")
-    humanoid.PlatformStand = false
-
-    print("Flight stopped")
-    flightBadge.Text = "Fly: off"
-end
 
 
 RunService.Stepped:Connect(function()
