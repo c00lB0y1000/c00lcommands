@@ -354,6 +354,29 @@ local function setupGUIAndConnections()
     end)
 end
 
+RunService.Stepped:Connect(function()
+    if noclip and character then
+        for _, part in pairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
+local function resetStatuses()
+    flying = false
+    noclip = false
+    shiftHeld = false
+    speed = 50
+    direction = Vector3.new()
+
+    flightBadge.Text = "Fly: off"
+    noclipBadge.Text = "Noclip: off"
+    sprintBadge.Text = "Sprint: off"
+    humanoid.WalkSpeed = normalSpeed
+end
+
 player.CharacterAdded:Connect(function(newCharacter)
     character = newCharacter
     humanoidRootPart = character:WaitForChild("HumanoidRootPart")
