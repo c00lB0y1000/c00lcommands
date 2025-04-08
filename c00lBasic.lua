@@ -25,6 +25,7 @@ local function setupGUIAndConnections()
     screenGui = Instance.new("ScreenGui")
     screenGui.Parent = player.PlayerGui
     screenGui.Enabled = true
+    screenGui.ResetOnSpawn = false  -- Ensure GUI persists across respawns
 
     local badgeText = Instance.new("TextLabel")
     badgeText.Parent = screenGui
