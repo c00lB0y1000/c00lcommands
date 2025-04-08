@@ -19,6 +19,8 @@ local shiftHeld = false
 local normalSpeed = 16
 local sprintSpeed = 32
 local espEnabled = false
+local beams = {}
+local originalTransparency = {} -- для восстановления прозрачности
 
 local screenGui
 
@@ -370,12 +372,27 @@ local function setupGUIAndConnections()
         end
     end)
 
-    local beams = {}
-
+    local function applyWallhack(character)
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") then
+                originalTransparency[part] = part.Transparency
+                part.Transparency = 0.7
+            end
+        end
+    end
+    
+    local function removeWallhack(character)
+        for _, part in ipairs(character:GetDescendants()) do
+            if part:IsA("BasePart") and originalTransparency[part] ~= nil then
+                part.Transparency = originalTransparency[part]
+            end
+        end
+    end
+    
     local function createESPLine(fromPart, toPart)
         local attachment0 = Instance.new("Attachment", fromPart)
         local attachment1 = Instance.new("Attachment", toPart)
-
+    
         local beam = Instance.new("Beam")
         beam.Attachment0 = attachment0
         beam.Attachment1 = attachment1
@@ -385,16 +402,16 @@ local function setupGUIAndConnections()
         beam.FaceCamera = true
         beam.LightEmission = 1
         beam.Parent = fromPart
-
+    
         table.insert(beams, {
             beam = beam,
             attachment0 = attachment0,
             attachment1 = attachment1
         })
-
+    
         espBadge.Text = "ESP: on"
     end
-
+    
     local function clearESP()
         for _, obj in ipairs(beams) do
             if obj.beam then obj.beam:Destroy() end
@@ -402,38 +419,47 @@ local function setupGUIAndConnections()
             if obj.attachment1 then obj.attachment1:Destroy() end
         end
         beams = {}
+    
+        -- убираем прозрачность
+        for _, plr in ipairs(Players:GetPlayers()) do
+            if plr ~= player and plr.Character then
+                removeWallhack(plr.Character)
+            end
+        end
+    
         espBadge.Text = "ESP: off"
     end
-
+    
     local function toggleESP()
         espEnabled = not espEnabled
         clearESP()
-
+    
         if espEnabled then
             for _, otherPlayer in ipairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
+                    applyWallhack(otherPlayer.Character)
                 end
             end
         end
     end
-
--- обновление ESP при появлении новых игроков
+    
+    -- обновление при новых игроках
     Players.PlayerAdded:Connect(function(newPlayer)
         newPlayer.CharacterAdded:Connect(function()
             if espEnabled then
                 task.wait(1)
                 if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
+                    applyWallhack(newPlayer.Character)
                 end
             end
         end)
     end)
-
-    -- нажатие клавиши Z
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.KeyCode == Enum.KeyCode.Z then
+    
+    -- пример кнопки на клавишу "F"
+    game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.F then
             toggleESP()
         end
     end)
