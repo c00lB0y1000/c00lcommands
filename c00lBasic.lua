@@ -1,4 +1,3 @@
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -21,7 +20,6 @@ local sprintSpeed = 32
 local espEnabled = false
 local beams = {}
 local originalTransparency = {}
-local updateConnection = nil -- для отключения цикла потом
 
 local screenGui
 
