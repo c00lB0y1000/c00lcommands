@@ -21,6 +21,7 @@ local sprintSpeed = 32
 local espEnabled = false
 local beams = {}
 local originalTransparency = {}
+local updateConnection = nil -- для отключения цикла потом
 
 local screenGui
 
@@ -372,7 +373,7 @@ local function setupGUIAndConnections()
         end
     end)
 
-    local function createESPLine(fromPart, toPart)
+    local function createESPLine(fromPart, toPart, targetPlayer)
         local attachment0 = Instance.new("Attachment", fromPart)
         local attachment1 = Instance.new("Attachment", toPart)
     
@@ -389,13 +390,13 @@ local function setupGUIAndConnections()
         table.insert(beams, {
             beam = beam,
             attachment0 = attachment0,
-            attachment1 = attachment1
+            attachment1 = attachment1,
+            targetPlayer = targetPlayer
         })
     
         espBadge.Text = "ESP: on"
     end
     
-    -- Очистка ESP
     local function clearESP()
         for _, obj in ipairs(beams) do
             if obj.beam then obj.beam:Destroy() end
@@ -404,7 +405,6 @@ local function setupGUIAndConnections()
         end
         beams = {}
     
-        -- Возврат прозрачности деталей Workspace
         for part, oldValue in pairs(originalTransparency) do
             if part and part:IsA("BasePart") then
                 part.Transparency = oldValue
@@ -412,45 +412,39 @@ local function setupGUIAndConnections()
         end
         originalTransparency = {}
     
+        if updateConnection then
+            updateConnection:Disconnect()
+            updateConnection = nil
+        end
+    
         espBadge.Text = "ESP: off"
     end
     
-    -- Воллхак — делает все детали в Workspace полупрозрачными
-    local function applyWallhack()
-        for _, obj in ipairs(workspace:GetDescendants()) do
-            if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
-                originalTransparency[obj] = obj.Transparency
-                obj.Transparency = 0.7
-            end
-        end
-    end
-    
-    -- Включение/выключение ESP
     local function toggleESP()
         espEnabled = not espEnabled
         clearESP()
     
         if espEnabled then
+            applyWallhack()
+    
+            -- Создаём изначальные лучи
             for _, otherPlayer in ipairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
+                    createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart, otherPlayer)
                 end
             end
-            applyWallhack()
+    
+            -- Цикл обновления ESP
+            updateConnection = RunService.RenderStepped:Connect(function()
+                for _, obj in ipairs(beams) do
+                    local targetChar = obj.targetPlayer.Character
+                    if targetChar and targetChar:FindFirstChild("HumanoidRootPart") then
+                        obj.attachment1.Position = targetChar.HumanoidRootPart.Position - obj.attachment1.Parent.Position
+                    end
+                end
+            end)
         end
     end
-    
-    -- Обработка новых игроков
-    Players.PlayerAdded:Connect(function(newPlayer)
-        newPlayer.CharacterAdded:Connect(function()
-            if espEnabled then
-                task.wait(1)
-                if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
-                end
-            end
-        end)
-    end)
     
     -- Клавиша Z для включения ESP
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
