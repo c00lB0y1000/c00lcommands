@@ -92,7 +92,7 @@ local function setupGUIAndConnections()
     helpWindow.Parent = screenGui
     helpWindow.Size = UDim2.new(0, 300, 0, 150)
     helpWindow.Position = UDim2.new(0, 220, 0, 10)
-    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\Z - ESP"
+    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\nZ - ESP"
     helpWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
     helpWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     helpWindow.BackgroundTransparency = 0.5
@@ -167,7 +167,7 @@ local function setupGUIAndConnections()
     local espBadge = Instance.new("TextLabel")
     espBadge.Parent = screenGui
     espBadge.Size = UDim2.new(0, 200, 0, 50)
-    espBadge.Position = UDim2.new(0, 10, 0, 70)
+    espBadge.Position = UDim2.new(0, 10, 0, 310)
     espBadge.Text = "ESP: off"
     espBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
     espBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
