@@ -372,74 +372,74 @@ local function setupGUIAndConnections()
     end)
 
 -- Создание ESP лучей
-local function createESPLine(fromPart, toPart)
-    local attachment0 = Instance.new("Attachment", fromPart)
-    local attachment1 = Instance.new("Attachment", toPart)
+    local function createESPLine(fromPart, toPart)
+        local attachment0 = Instance.new("Attachment", fromPart)
+        local attachment1 = Instance.new("Attachment", toPart)
 
-    local beam = Instance.new("Beam")
-    beam.Attachment0 = attachment0
-    beam.Attachment1 = attachment1
-    beam.Color = ColorSequence.new(Color3.new(0, 1, 0)) -- зелёный
-    beam.Width0 = 0.1
-    beam.Width1 = 0.1
-    beam.FaceCamera = true
-    beam.LightEmission = 1
-    beam.Parent = fromPart
+        local beam = Instance.new("Beam")
+        beam.Attachment0 = attachment0
+        beam.Attachment1 = attachment1
+        beam.Color = ColorSequence.new(Color3.new(0, 1, 0)) -- зелёный
+        beam.Width0 = 0.1
+        beam.Width1 = 0.1
+        beam.FaceCamera = true
+        beam.LightEmission = 1
+        beam.Parent = fromPart
 
-    table.insert(beams, {
-        beam = beam,
-        attachment0 = attachment0,
-        attachment1 = attachment1
-    })
+        table.insert(beams, {
+            beam = beam,
+            attachment0 = attachment0,
+            attachment1 = attachment1
+        })
 
-    espBadge.Text = "ESP: on"
-end
-
--- Очистка ESP
-local function clearESP()
-    for _, obj in ipairs(beams) do
-        if obj.beam then obj.beam:Destroy() end
-        if obj.attachment0 then obj.attachment0:Destroy() end
-        if obj.attachment1 then obj.attachment1:Destroy() end
+        espBadge.Text = "ESP: on"
     end
-    beams = {}
 
-    -- Возврат прозрачности деталей Workspace
-    for part, oldValue in pairs(originalTransparency) do
-        if part and part:IsA("BasePart") then
-            part.Transparency = oldValue
+    -- Очистка ESP
+    local function clearESP()
+        for _, obj in ipairs(beams) do
+            if obj.beam then obj.beam:Destroy() end
+            if obj.attachment0 then obj.attachment0:Destroy() end
+            if obj.attachment1 then obj.attachment1:Destroy() end
         end
-    end
-    originalTransparency = {}
+        beams = {}
 
-    espBadge.Text = "ESP: off"
-end
-
--- Воллхак — делает все детали в Workspace полупрозрачными
-local function applyWallhack()
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
-            originalTransparency[obj] = obj.Transparency
-            obj.Transparency = 0.7
-        end
-    end
-end
-
--- Включение/выключение ESP
-local function toggleESP()
-    espEnabled = not espEnabled
-    clearESP()
-
-    if espEnabled then
-        for _, otherPlayer in ipairs(Players:GetPlayers()) do
-            if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
+        -- Возврат прозрачности деталей Workspace
+        for part, oldValue in pairs(originalTransparency) do
+            if part and part:IsA("BasePart") then
+                part.Transparency = oldValue
             end
         end
-        applyWallhack()
+        originalTransparency = {}
+
+        espBadge.Text = "ESP: off"
+    end
+
+-- Воллхак — делает все детали в Workspace полупрозрачными
+    local function applyWallhack()
+        for _, obj in ipairs(workspace:GetDescendants()) do
+            if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
+                originalTransparency[obj] = obj.Transparency
+                obj.Transparency = 0.7
+            end
+        end
+    end
+
+    -- Включение/выключение ESP
+    local function toggleESP()
+        espEnabled = not espEnabled
+        clearESP()
+
+        if espEnabled then
+            for _, otherPlayer in ipairs(Players:GetPlayers()) do
+                if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    createESPLine(humanoidRootPart, otherPlayer.Character.HumanoidRootPart)
+                end
+            end
+            applyWallhack()
+        end
     end
 end
-
 -- Обработка новых игроков
 Players.PlayerAdded:Connect(function(newPlayer)
     newPlayer.CharacterAdded:Connect(function()
