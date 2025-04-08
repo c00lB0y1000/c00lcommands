@@ -372,37 +372,39 @@ local function setupGUIAndConnections()
 
     local beams = {}
 
-    local function createBoxESP(character)
-        local hrp = character:FindFirstChild("HumanoidRootPart")
-        if not hrp then return end
+    local function createESPLine(fromPart, toPart)
+        local attachment0 = Instance.new("Attachment", fromPart)
+        local attachment1 = Instance.new("Attachment", toPart)
 
-        local billboard = Instance.new("BillboardGui")
-        billboard.Name = "ESPBox"
-        billboard.Adornee = hrp
-        billboard.AlwaysOnTop = true
-        billboard.Size = UDim2.new(4, 0, 5.5, 0)
-        billboard.StudsOffset = Vector3.new(0, 0, 0)
-        billboard.Parent = hrp
+        local beam = Instance.new("Beam")
+        beam.Attachment0 = attachment0
+        beam.Attachment1 = attachment1
+        beam.Color = ColorSequence.new(Color3.new(0, 1, 0)) -- зелёный
+        beam.Width0 = 0.1
+        beam.Width1 = 0.1
+        beam.FaceCamera = true
+        beam.LightEmission = 1
+        beam.Parent = fromPart
 
-        local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(1, 0, 1, 0)
-        frame.BackgroundTransparency = 1
-        frame.BorderSizePixel = 2
-        frame.BorderColor3 = Color3.new(0, 1, 0)
-        frame.Parent = billboard
+        table.insert(beams, {
+            beam = beam,
+            attachment0 = attachment0,
+            attachment1 = attachment1
+        })
 
-        table.insert(beams, billboard) -- beams теперь будет хранить все GUI
+        espBadge.Text = "ESP: on"
     end
 
     local function clearESP()
-        for _, gui in ipairs(beams) do
-            if gui and gui:IsA("BillboardGui") then
-                gui:Destroy()
-            end
+        for _, obj in ipairs(beams) do
+            if obj.beam then obj.beam:Destroy() end
+            if obj.attachment0 then obj.attachment0:Destroy() end
+            if obj.attachment1 then obj.attachment1:Destroy() end
         end
         beams = {}
         espBadge.Text = "ESP: off"
     end
+
     local function toggleESP()
         espEnabled = not espEnabled
         clearESP()
@@ -452,6 +454,8 @@ local function resetStatuses()
     flying = false
     noclip = false
     shiftHeld = false
+    espEnabled = false
+    
     speed = 50
     direction = Vector3.new()
 
