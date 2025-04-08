@@ -1,3 +1,4 @@
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -371,11 +372,10 @@ local function setupGUIAndConnections()
         end
     end)
 
--- Создание ESP лучей
     local function createESPLine(fromPart, toPart)
         local attachment0 = Instance.new("Attachment", fromPart)
         local attachment1 = Instance.new("Attachment", toPart)
-
+    
         local beam = Instance.new("Beam")
         beam.Attachment0 = attachment0
         beam.Attachment1 = attachment1
@@ -385,16 +385,16 @@ local function setupGUIAndConnections()
         beam.FaceCamera = true
         beam.LightEmission = 1
         beam.Parent = fromPart
-
+    
         table.insert(beams, {
             beam = beam,
             attachment0 = attachment0,
             attachment1 = attachment1
         })
-
+    
         espBadge.Text = "ESP: on"
     end
-
+    
     -- Очистка ESP
     local function clearESP()
         for _, obj in ipairs(beams) do
@@ -403,7 +403,7 @@ local function setupGUIAndConnections()
             if obj.attachment1 then obj.attachment1:Destroy() end
         end
         beams = {}
-
+    
         -- Возврат прозрачности деталей Workspace
         for part, oldValue in pairs(originalTransparency) do
             if part and part:IsA("BasePart") then
@@ -411,11 +411,11 @@ local function setupGUIAndConnections()
             end
         end
         originalTransparency = {}
-
+    
         espBadge.Text = "ESP: off"
     end
-
--- Воллхак — делает все детали в Workspace полупрозрачными
+    
+    -- Воллхак — делает все детали в Workspace полупрозрачными
     local function applyWallhack()
         for _, obj in ipairs(workspace:GetDescendants()) do
             if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
@@ -424,12 +424,12 @@ local function setupGUIAndConnections()
             end
         end
     end
-
+    
     -- Включение/выключение ESP
     local function toggleESP()
         espEnabled = not espEnabled
         clearESP()
-
+    
         if espEnabled then
             for _, otherPlayer in ipairs(Players:GetPlayers()) do
                 if otherPlayer ~= player and otherPlayer.Character and otherPlayer.Character:FindFirstChild("HumanoidRootPart") then
@@ -439,25 +439,26 @@ local function setupGUIAndConnections()
             applyWallhack()
         end
     end
-end
--- Обработка новых игроков
-Players.PlayerAdded:Connect(function(newPlayer)
-    newPlayer.CharacterAdded:Connect(function()
-        if espEnabled then
-            task.wait(1)
-            if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
+    
+    -- Обработка новых игроков
+    Players.PlayerAdded:Connect(function(newPlayer)
+        newPlayer.CharacterAdded:Connect(function()
+            if espEnabled then
+                task.wait(1)
+                if newPlayer.Character and newPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    createESPLine(humanoidRootPart, newPlayer.Character.HumanoidRootPart)
+                end
             end
+        end)
+    end)
+    
+    -- Клавиша Z для включения ESP
+    UserInputService.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode.Z then
+            toggleESP()
         end
     end)
-end)
-
--- Клавиша Z для включения ESP
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.Z then
-        toggleESP()
-    end
-end)
+end
 
 RunService.Stepped:Connect(function()
     if noclip and character then
