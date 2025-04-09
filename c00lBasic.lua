@@ -417,10 +417,14 @@ local function setupGUIAndConnections()
     
     -- Воллхак — делает все детали в Workspace полупрозрачными
     local function applyWallhack()
-        for _, obj in ipairs(workspace:GetDescendants()) do
-            if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
-                originalTransparency[obj] = obj.Transparency
-                obj.Transparency = 0.7
+        while espEnabled do
+            for _, obj in ipairs(workspace:GetDescendants()) do
+                if obj:IsA("BasePart") and not Players:GetPlayerFromCharacter(obj:FindFirstAncestorOfClass("Model")) then
+                    originalTransparency[obj] = obj.Transparency
+                    obj.Transparency = 0.7
+                end
+            if espEnabled == False:
+                break
             end
         end
     end
