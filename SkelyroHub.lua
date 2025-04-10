@@ -61,6 +61,9 @@ local function createScriptButton(name, rawURL)
 			end
 		end
 
+		-- Удаляем меню CheatHub
+		screenGui:Destroy()
+
 		-- Загружаем и выполняем скрипт
 		local success, result = pcall(function()
 			local scriptSource = game:HttpGet(rawURL)
