@@ -1,100 +1,82 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Главное меню GUI
+-- Очистка старого GUI если есть
+if player.PlayerGui:FindFirstChild("CheatHub") then
+	player.PlayerGui:FindFirstChild("CheatHub"):Destroy()
+end
+
+-- Создание ScreenGui
 local screenGui = Instance.new("ScreenGui", player.PlayerGui)
-screenGui.ResetOnSpawn = false
 screenGui.Name = "CheatHub"
+screenGui.ResetOnSpawn = false
 
-local currentUI -- сюда будет сохраняться текущий активный интерфейс чита
+-- Фон меню
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 300, 0, 250)
+mainFrame.Position = UDim2.new(0.5, -150, 0.5, -125)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 
--- Хелпер для кнопок
-local function createMenuButton(parent, position, text, callback)
+-- Скруглённые углы
+local corner = Instance.new("UICorner", mainFrame)
+corner.CornerRadius = UDim.new(0, 10)
+
+-- Layout для кнопок
+local uiList = Instance.new("UIListLayout", mainFrame)
+uiList.Padding = UDim.new(0, 10)
+uiList.FillDirection = Enum.FillDirection.Vertical
+uiList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+uiList.VerticalAlignment = Enum.VerticalAlignment.Center
+
+-- Название
+local title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, -20, 0, 40)
+title.Text = "Cheat Hub"
+title.BackgroundTransparency = 1
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 24
+
+-- Хелпер для создания кнопок
+local function createScriptButton(name, rawURL)
 	local button = Instance.new("TextButton")
-	button.Size = UDim2.new(0, 200, 0, 40)
-	button.Position = position
-	button.Text = text
-	button.Parent = parent
-	button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	button.Size = UDim2.new(1, -40, 0, 40)
+	button.Text = name
+	button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 	button.TextColor3 = Color3.fromRGB(255, 255, 255)
-	button.Font = Enum.Font.GothamBold
+	button.Font = Enum.Font.Gotham
 	button.TextSize = 18
-	button.BorderSizePixel = 2
-	button.BorderColor3 = Color3.fromRGB(0, 255, 0)
-	button.MouseButton1Click:Connect(callback)
-	return button
-end
+	button.Parent = mainFrame
 
--- Удаление текущего UI
-local function clearCurrentUI()
-	if currentUI then
-		currentUI:Destroy()
-		currentUI = nil
-	end
-end
+	local corner = Instance.new("UICorner", button)
+	corner.CornerRadius = UDim.new(0, 6)
 
--- Тестовые функции для разных плейсов
-local function loadCheatForPlace1()
-	clearCurrentUI()
+	button.MouseButton1Click:Connect(function()
+		-- Удаляем старый интерфейс если есть
+		for _, v in pairs(player.PlayerGui:GetChildren()) do
+			if v.Name == "InjectedCheat" then
+				v:Destroy()
+			end
+		end
 
-	local ui = Instance.new("Frame")
-	ui.Size = UDim2.new(0, 300, 0, 200)
-	ui.Position = UDim2.new(0.5, -150, 0.5, -100)
-	ui.AnchorPoint = Vector2.new(0.5, 0.5)
-	ui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	ui.BorderSizePixel = 2
-	ui.BorderColor3 = Color3.fromRGB(0, 255, 0)
-	ui.Parent = screenGui
-	currentUI = ui
+		-- Загружаем и выполняем скрипт
+		local success, result = pcall(function()
+			local scriptSource = game:HttpGet(rawURL)
+			local func = loadstring(scriptSource)
+			if func then
+				func()
+			end
+		end)
 
-	local label = Instance.new("TextLabel", ui)
-	label.Size = UDim2.new(1, 0, 0.3, 0)
-	label.Text = "Place 1 Cheat Activated"
-	label.BackgroundTransparency = 1
-	label.TextColor3 = Color3.new(1, 1, 1)
-	label.Font = Enum.Font.GothamBold
-	label.TextSize = 20
-
-	createMenuButton(ui, UDim2.new(0, 50, 0, 100), "Back", function()
-		clearCurrentUI()
-		screenGui.Enabled = true
+		if not success then
+			warn("Ошибка загрузки скрипта:", result)
+		end
 	end)
 end
 
-local function loadCheatForPlace2()
-	clearCurrentUI()
-
-	local ui = Instance.new("Frame")
-	ui.Size = UDim2.new(0, 300, 0, 200)
-	ui.Position = UDim2.new(0.5, -150, 0.5, -100)
-	ui.AnchorPoint = Vector2.new(0.5, 0.5)
-	ui.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-	ui.BorderSizePixel = 2
-	ui.BorderColor3 = Color3.fromRGB(255, 0, 0)
-	ui.Parent = screenGui
-	currentUI = ui
-
-	local label = Instance.new("TextLabel", ui)
-	label.Size = UDim2.new(1, 0, 0.3, 0)
-	label.Text = "Place 2 Cheat Activated"
-	label.BackgroundTransparency = 1
-	label.TextColor3 = Color3.new(1, 1, 1)
-	label.Font = Enum.Font.GothamBold
-	label.TextSize = 20
-
-	createMenuButton(ui, UDim2.new(0, 50, 0, 100), "Back", function()
-		clearCurrentUI()
-		screenGui.Enabled = true
-	end)
-end
-
--- Главное меню кнопок
-createMenuButton(screenGui, UDim2.new(0, 50, 0, 50), "Cheat for Place 1", function()
-	screenGui.Enabled = false
-	loadCheatForPlace1()
-end)
-
-createMenuButton(screenGui, UDim2.new(0, 50, 0, 110), "Cheat for Place 2", function()
-	screenGui.Enabled = false
-	loadCheatForPlace2()
-end)
+-- 🔗 Пример добавления скриптов из GitHub:
+createScriptButton("ESP Script", "https://raw.githubusercontent.com/c00lB0y1000/c00lcommands/refs/heads/main/c00lBasic.lua")
+createScriptButton("Fly Hack", "https://raw.githubusercontent.com/username/repo/main/fly.lua")
+createScriptButton("Auto Farm", "https://raw.githubusercontent.com/username/repo/main/autofarm.lua")
