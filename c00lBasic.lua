@@ -1,4 +1,3 @@
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -94,7 +93,7 @@ local function setupGUIAndConnections()
     helpWindow.Parent = screenGui
     helpWindow.Size = UDim2.new(0, 300, 0, 150)
     helpWindow.Position = UDim2.new(0, 220, 0, 10)
-    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\nZ - ESP"
+    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\nZ - ESP\nY - Teleport to player"
     helpWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
     helpWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     helpWindow.BackgroundTransparency = 0.5
@@ -221,6 +220,19 @@ local function setupGUIAndConnections()
     stopSpectateButton.BorderSizePixel = 2
     stopSpectateButton.BorderColor3 = Color3.fromRGB(255, 0, 0)
 
+    local teleportButton = Instance.new("TextButton")
+    teleportButton.Parent = screenGui
+    teleportButton.Size = UDim2.new(0, 200, 0, 40)
+    teleportButton.Position = UDim2.new(0, 700, 0, 360)
+    teleportButton.Text = "Teleport to Player"
+    teleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    teleportButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    teleportButton.BackgroundTransparency = 0.5
+    teleportButton.TextSize = 18
+    teleportButton.Font = Enum.Font.GothamBold
+    teleportButton.BorderSizePixel = 2
+    teleportButton.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
     stopSpectateButton.MouseButton1Click:Connect(function()
         workspace.CurrentCamera.CameraSubject = player.Character:FindFirstChild("Humanoid")
         supportWindow.Text = "Spectate stopped"
@@ -253,6 +265,16 @@ local function setupGUIAndConnections()
         end
     end)
 
+    -- Функция телепортации к игроку по имени
+    local function teleportToPlayer(targetName)
+        local targetPlayer = Players:FindFirstChild(targetName)
+        if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            humanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
+            supportWindow.Text = "Teleported to " .. targetName
+        else
+            supportWindow.Text = "Player not found or not loaded"
+        end
+    end
 
     spectateButton.MouseButton1Click:Connect(function()
         local targetName = spectateInput.Text
@@ -266,6 +288,11 @@ local function setupGUIAndConnections()
         else
             print("Player not found or not loaded.")
         end
+    end)
+
+    teleportButton.MouseButton1Click:Connect(function()
+        local targetName = spectateInput.Text
+        teleportToPlayer(targetName)
     end)
 
     local function startFlying()
@@ -306,35 +333,29 @@ local function setupGUIAndConnections()
 
         local key = input.KeyCode
 
-        UserInputService.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-        
-            local key = input.KeyCode
-        
-            if key == Enum.KeyCode.F then
-                flying = not flying
-                if flying then
-                    startFlying()
-                else
-                    stopFlying()
-                end
+        if key == Enum.KeyCode.F then
+            flying = not flying
+            if flying then
+                startFlying()
+            else
+                stopFlying()
             end
-        
-            -- Update direction based on key input
-            if key == Enum.KeyCode.W then
-                direction = Vector3.new(0, 0, -1)
-            elseif key == Enum.KeyCode.S then
-                direction = Vector3.new(0, 0, 1)
-            elseif key == Enum.KeyCode.A then
-                direction = Vector3.new(-1, 0, 0)
-            elseif key == Enum.KeyCode.D then
-                direction = Vector3.new(1, 0, 0)
-            elseif key == Enum.KeyCode.Space then
-                direction = Vector3.new(0, 1, 0)
-            elseif key == Enum.KeyCode.LeftControl then
-                direction = Vector3.new(0, -1, 0)
-            end
-        end)
+        end
+    
+        -- Update direction based on key input
+        if key == Enum.KeyCode.W then
+            direction = Vector3.new(0, 0, -1)
+        elseif key == Enum.KeyCode.S then
+            direction = Vector3.new(0, 0, 1)
+        elseif key == Enum.KeyCode.A then
+            direction = Vector3.new(-1, 0, 0)
+        elseif key == Enum.KeyCode.D then
+            direction = Vector3.new(1, 0, 0)
+        elseif key == Enum.KeyCode.Space then
+            direction = Vector3.new(0, 1, 0)
+        elseif key == Enum.KeyCode.LeftControl then
+            direction = Vector3.new(0, -1, 0)
+        end
 
         if key == Enum.KeyCode.R then
             noclip = not noclip
@@ -347,6 +368,11 @@ local function setupGUIAndConnections()
                 local newPosition = target.Position + Vector3.new(0, 5, 0)
                 humanoidRootPart.CFrame = CFrame.new(newPosition)
             end
+        end
+
+        if key == Enum.KeyCode.Y then
+            local targetName = spectateInput.Text
+            teleportToPlayer(targetName)
         end
 
         if key == Enum.KeyCode.LeftShift then
