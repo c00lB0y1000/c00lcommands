@@ -1,3 +1,4 @@
+
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -22,6 +23,9 @@ local beams = {}
 local originalTransparency = {}
 
 local screenGui
+
+local spinning = false
+local spinSpeed = 10000
 
 local function setupGUIAndConnections()
     screenGui = Instance.new("ScreenGui")
@@ -89,11 +93,26 @@ local function setupGUIAndConnections()
     sprintBadge.BorderSizePixel = 2
     sprintBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 
+    local spinBadge = Instance.new("TextLabel")
+    spinBadge.Parent = screenGui
+    spinBadge.Size = UDim2.new(0, 200, 0, 50)
+    spinBadge.Position = UDim2.new(0, 10, 0, 370)
+    spinBadge.Text = "Spin: off"
+    spinBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
+    spinBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    spinBadge.BackgroundTransparency = 0.5
+    spinBadge.TextSize = 18
+    spinBadge.Font = Enum.Font.GothamBold
+    spinBadge.TextXAlignment = Enum.TextXAlignment.Center
+    spinBadge.TextYAlignment = Enum.TextYAlignment.Center
+    spinBadge.BorderSizePixel = 2
+    spinBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
+
     local helpWindow = Instance.new("TextLabel")
     helpWindow.Parent = screenGui
     helpWindow.Size = UDim2.new(0, 300, 0, 150)
     helpWindow.Position = UDim2.new(0, 220, 0, 10)
-    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\nZ - ESP\nY - Teleport to player"
+    helpWindow.Text = "HotKey:\nF - Fly\nR - Noclip\nShift - Sprint\nT - teleport of cursor\nZ - ESP\nY - Teleport to player\nJ - Spin"
     helpWindow.TextColor3 = Color3.fromRGB(255, 255, 255)
     helpWindow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
     helpWindow.BackgroundTransparency = 0.5
@@ -328,6 +347,29 @@ local function setupGUIAndConnections()
         flightBadge.Text = "Fly: off"
     end
 
+    local function startSpinning()
+        bodyGyro = Instance.new("BodyGyro")
+        bodyGyro.P = 9e4
+        bodyGyro.MaxTorque = Vector3.new(0, 9e9, 0)
+        bodyGyro.CFrame = humanoidRootPart.CFrame
+        bodyGyro.Parent = humanoidRootPart
+
+        RunService:BindToRenderStep("Spinning", Enum.RenderPriority.Input.Value, function()
+            bodyGyro.CFrame = bodyGyro.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+        end)
+
+        print("Spinning started")
+        spinBadge.Text = "Spin: on"
+    end
+
+    local function stopSpinning()
+        if bodyGyro then bodyGyro:Destroy() end
+        RunService:UnbindFromRenderStep("Spinning")
+
+        print("Spinning stopped")
+        spinBadge.Text = "Spin: off"
+    end
+
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
 
@@ -380,6 +422,15 @@ local function setupGUIAndConnections()
             if humanoid then
                 humanoid.WalkSpeed = sprintSpeed
                 sprintBadge.Text = "Sprint: on"
+            end
+        end
+
+        if key == Enum.KeyCode.J then
+            spinning = not spinning
+            if spinning then
+                startSpinning()
+            else
+                stopSpinning()
             end
         end
     end)
@@ -501,6 +552,7 @@ local function resetStatuses()
     noclip = false
     shiftHeld = false
     espEnabled = false
+    spinning = false
     
     speed = 50
     direction = Vector3.new()
@@ -508,6 +560,7 @@ local function resetStatuses()
     flightBadge.Text = "Fly: off"
     noclipBadge.Text = "Noclip: off"
     sprintBadge.Text = "Sprint: off"
+    spinBadge.Text = "Spin: off"
     humanoid.WalkSpeed = normalSpeed
 end
 
