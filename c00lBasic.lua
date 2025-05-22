@@ -25,7 +25,7 @@ local originalTransparency = {}
 local screenGui
 
 local spinning = false
-local spinSpeed = 10000
+local spinSpeed = 1000000
 
 local function setupGUIAndConnections()
     screenGui = Instance.new("ScreenGui")
