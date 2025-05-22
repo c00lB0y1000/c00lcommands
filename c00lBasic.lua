@@ -47,6 +47,29 @@ local function setupGUIAndConnections()
     spinBadge.BorderSizePixel = 2
     spinBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
 
+    local function startSpinning()
+        bodyGyro = Instance.new("BodyGyro")
+        bodyGyro.P = 9e4
+        bodyGyro.MaxTorque = Vector3.new(0, 9e9, 0)
+        bodyGyro.CFrame = humanoidRootPart.CFrame
+        bodyGyro.Parent = humanoidRootPart
+
+        RunService:BindToRenderStep("Spinning", Enum.RenderPriority.Input.Value, function()
+            bodyGyro.CFrame = bodyGyro.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
+        end)
+
+        print("Spinning started")
+        spinBadge.Text = "Spin: on"
+    end
+
+    local function stopSpinning()
+        if bodyGyro then bodyGyro:Destroy() end
+        RunService:UnbindFromRenderStep("Spinning")
+
+        print("Spinning stopped")
+        spinBadge.Text = "Spin: off"
+    end
+
     local badgeText = Instance.new("TextLabel")
     badgeText.Parent = screenGui
     badgeText.Size = UDim2.new(0, 200, 0, 50)
@@ -515,28 +538,23 @@ RunService.Stepped:Connect(function()
         end
     end
 end)
-local function startSpinning()
-    bodyGyro = Instance.new("BodyGyro")
-    bodyGyro.P = 9e4
-    bodyGyro.MaxTorque = Vector3.new(0, 9e9, 0)
-    bodyGyro.CFrame = humanoidRootPart.CFrame
-    bodyGyro.Parent = humanoidRootPart
 
-    RunService:BindToRenderStep("Spinning", Enum.RenderPriority.Input.Value, function()
-        bodyGyro.CFrame = bodyGyro.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
-    end)
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
 
-    print("Spinning started")
-    spinBadge.Text = "Spin: on"
-end
+    local key = input.KeyCode
 
-local function stopSpinning()
-    if bodyGyro then bodyGyro:Destroy() end
-    RunService:UnbindFromRenderStep("Spinning")
+    if key == Enum.KeyCode.J then
+        spinning = not spinning
+        if spinning then
+            startSpinning()
+        else
+            stopSpinning()
+        end
+    end
 
-    print("Spinning stopped")
-    spinBadge.Text = "Spin: off"
-end
+    -- Existing input handling code...
+end)
 
 
 local function resetStatuses()
