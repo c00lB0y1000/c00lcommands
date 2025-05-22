@@ -23,52 +23,11 @@ local originalTransparency = {}
 
 local screenGui
 
-local spinning = false
-local spinSpeed = 10000
-
 local function setupGUIAndConnections()
     screenGui = Instance.new("ScreenGui")
     screenGui.Parent = player.PlayerGui
     screenGui.Enabled = true
     screenGui.ResetOnSpawn = false  -- Ensure GUI persists across respawns
-
-    local spinBadge = Instance.new("TextLabel")
-    spinBadge.Parent = screenGui
-    spinBadge.Size = UDim2.new(0, 200, 0, 50)
-    spinBadge.Position = UDim2.new(0, 10, 0, 370)
-    spinBadge.Text = "Spin: off"
-    spinBadge.TextColor3 = Color3.fromRGB(255, 255, 255)
-    spinBadge.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    spinBadge.BackgroundTransparency = 0.5
-    spinBadge.TextSize = 18
-    spinBadge.Font = Enum.Font.GothamBold
-    spinBadge.TextXAlignment = Enum.TextXAlignment.Center
-    spinBadge.TextYAlignment = Enum.TextYAlignment.Center
-    spinBadge.BorderSizePixel = 2
-    spinBadge.BorderColor3 = Color3.fromRGB(0, 255, 0)
-
-    local function startSpinning()
-        bodyGyro = Instance.new("BodyGyro")
-        bodyGyro.P = 9e4
-        bodyGyro.MaxTorque = Vector3.new(0, 9e9, 0)
-        bodyGyro.CFrame = humanoidRootPart.CFrame
-        bodyGyro.Parent = humanoidRootPart
-
-        RunService:BindToRenderStep("Spinning", Enum.RenderPriority.Input.Value, function()
-            bodyGyro.CFrame = bodyGyro.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
-        end)
-
-        print("Spinning started")
-        spinBadge.Text = "Spin: on"
-    end
-
-    local function stopSpinning()
-        if bodyGyro then bodyGyro:Destroy() end
-        RunService:UnbindFromRenderStep("Spinning")
-
-        print("Spinning stopped")
-        spinBadge.Text = "Spin: off"
-    end
 
     local badgeText = Instance.new("TextLabel")
     badgeText.Parent = screenGui
@@ -84,8 +43,6 @@ local function setupGUIAndConnections()
     badgeText.TextYAlignment = Enum.TextYAlignment.Center
     badgeText.BorderSizePixel = 2
     badgeText.BorderColor3 = Color3.fromRGB(0, 255, 0)
-
-    
 
     local flightBadge = Instance.new("TextLabel")
     flightBadge.Parent = screenGui
@@ -538,24 +495,6 @@ RunService.Stepped:Connect(function()
         end
     end
 end)
-
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-
-    local key = input.KeyCode
-
-    if key == Enum.KeyCode.J then
-        spinning = not spinning
-        if spinning then
-            startSpinning()
-        else
-            stopSpinning()
-        end
-    end
-
-    -- Existing input handling code...
-end)
-
 
 local function resetStatuses()
     flying = false
