@@ -1,4 +1,3 @@
-
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -25,7 +24,7 @@ local originalTransparency = {}
 local screenGui
 
 local spinning = false
-local spinSpeed = 1000000
+local spinSpeed = 1000000  -- Set spin speed to 1,000,000
 
 local function setupGUIAndConnections()
     screenGui = Instance.new("ScreenGui")
@@ -348,11 +347,13 @@ local function setupGUIAndConnections()
     end
 
     local function startSpinning()
-        bodyGyro = Instance.new("BodyGyro")
-        bodyGyro.P = 9e4
-        bodyGyro.MaxTorque = Vector3.new(0, 9e9, 0)
-        bodyGyro.CFrame = humanoidRootPart.CFrame
-        bodyGyro.Parent = humanoidRootPart
+        if not bodyGyro then
+            bodyGyro = Instance.new("BodyGyro")
+            bodyGyro.P = 9e4
+            bodyGyro.MaxTorque = Vector3.new(0, 9e9, 0)
+            bodyGyro.CFrame = humanoidRootPart.CFrame
+            bodyGyro.Parent = humanoidRootPart
+        end
 
         RunService:BindToRenderStep("Spinning", Enum.RenderPriority.Input.Value, function()
             bodyGyro.CFrame = bodyGyro.CFrame * CFrame.Angles(0, math.rad(spinSpeed), 0)
